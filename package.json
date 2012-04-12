@@ -1,0 +1,24 @@
+{
+    "name":"gofigure",
+    "description":"Configuration helper for node",
+    "version":"0.0.1",
+    "keywords":["Config", "Configuration", "Configurations", "JSON", "Properties", "Property"],
+    "repository":{
+        "type":"git",
+        "url":"git@github.com:Pollen/gofigure.git"
+    },
+    "dependencies":{
+        "comb":">=0.1.1"
+    },
+    "devVependencies":{
+        "it":">=0.0.1"
+    },
+    "author":"Doug Martin (doug.martin@pollenware.com)",
+    "main":"index.js",
+    "directories":{
+        "lib":"lib"
+    },
+    "engines":{
+        "node":">= 0.6.1"
+    }
+}
