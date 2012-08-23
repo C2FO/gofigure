@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/Pollenware/gofigure.png)](http://travis-ci.org/Pollenware/gofigure)
 #gofigure
 
 Gofigure is a configuration tool for node to help in the gathering and monitoring of configuration files in node. 
