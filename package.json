@@ -1,11 +1,12 @@
 {
     "name":"gofigure",
     "description":"Configuration helper for node",
-    "version":"0.0.1",
+    "version":"0.0.2",
     "keywords":["Config", "Configuration", "Configurations", "JSON", "Properties", "Property"],
+    "homepage": "http://c2fo.github.com/gofigure",
     "repository":{
         "type":"git",
-        "url":"git@github.com:Pollen/gofigure.git"
+        "url":"git@github.com:C2FO/gofigure.git"
     },
     "dependencies":{
         "comb":">=0.1.1"
