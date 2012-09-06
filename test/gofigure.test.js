@@ -85,6 +85,7 @@ it.describe("GoFigure", function (it) {
         fs.writeFileSync(__dirname + "/configs/config-env/config.json", JSON.stringify(envConf, null, 4));
     });
 
+
     it.describe("#load", function (it) {
         it.should("load configuration from directories", function (next) {
             var config1 = goFigure({locations:[__dirname + "/configs/configs1"]});
@@ -242,7 +243,7 @@ it.describe("GoFigure", function (it) {
                     called++;
                     res.push({key:key, val:comb.isObject(val) ? comb.deepMerge({}, val) : val});
                 });
-            })
+            });
             var changes = [
                 [comb.deepMerge({}, conf1, {a:4}), 1],
                 [comb.deepMerge({}, conf1, {b:{c:5}}), 2],
@@ -253,7 +254,7 @@ it.describe("GoFigure", function (it) {
             var l = changes.length;
             (function _next(index) {
                 if (index < l) {
-                    fs.writeFile(__dirname + "/configs/configs1/config1.json", JSON.stringify(changes[index][0], null, 4), function (err, res) {
+                    fs.writeFile(__dirname + "/configs/configs1/config1.json", JSON.stringify(changes[index][0], null, 4), "utf8", function (err, res) {
                         if (err) {
                             next(err);
                         } else {
@@ -843,7 +844,5 @@ it.describe("GoFigure", function (it) {
         });
 
     });
-    it.run();
-})
-;
+}).as(module).run();
 
