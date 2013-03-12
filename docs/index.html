@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>gofigure</title>
-    <link rel="stylesheet" href="./assets/css/bootstrap.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/css/prettify.css">
     <style type="text/css">
         
@@ -74,13 +74,18 @@
             z-index: 1000;
         }
 
+        .dropdown-menu{
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
         @media (max-width:979px) {
             .subnav{
                 margin-top: auto;
             }
         }
     </style>
-    <link rel="stylesheet" href="./assets/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap-responsive.min.css">
     <script type="text/javascript">
         var init = (function () {
             "use strict";
@@ -164,43 +169,38 @@
 
 
 
-  <h1>gofigure</h1>
-<p>Gofigure is a configuration tool for node to help in the gathering and monitoring of configuration files in node.
-
-</p>
+  <p><a href="https://travis-ci.org/C2FO/gofigure"><img src="https://travis-ci.org/C2FO/gofigure.png" alt="Build Status"></a></p>
+<h1>gofigure</h1>
+<p>Gofigure is a configuration tool for node to help in the gathering and monitoring of configuration files in node. </p>
 <h1>Installation</h1>
 <pre class='prettyprint linenums lang-js'><code>npm install gofigure</code></pre>
 <h1>Usage</h1>
 <ul>
-<li><a href="#load">Loading A Configuration</a><ul>
-<li><a href="#loadDir">Directories</a></li>
+<li><a href="#load">Loading A Configuration</a>        <ul>
+<li><a href="#loadDir">Directories</a>         </li>
 <li><a href="#loadFiles">Files</a></li>
 </ul>
 </li>
 <li><a href="#monitoring">Monitoring Property Changes</a><ul>
-<li><a href="#monitoringAll">Monitoring All Files</a></li>
-<li><a href="#monitoringSome">Monitoring Certain Files</a></li>
+<li><a href="#monitoringAll">Monitoring All Files</a>   </li>
+<li><a href="#monitoringSome">Monitoring Certain Files</a>   </li>
 <li><a href="#monitoringSyntax">Property Topic Syntax</a></li>
 <li><a href="#monitoringCB">Property Change Callback</a></li>
 </ul>
 </li>
 <li><a href="#environments">Environments</a></li>
 </ul>
-<p><a name="load"></a>
-</p>
+<p><a name="load"></a></p>
 <h2>Loading configurations</h2>
-<p>Gofigure currently handles the loading of JSON files for configurations.
-
-</p>
-<p>To Get an instance of a configuration object use the <code>gofigure</code> method. The <code>gofigure</code> method takes an object that accepts the following options
-
-</p>
+<p>Gofigure currently handles the loading of JSON files for configurations. </p>
+<p>To Get an instance of a configuration object use the <code>gofigure</code> method. The <code>gofigure</code> method takes an object that accepts the following options</p>
 <ul>
 <li><a href="#loadDir">locations</a>  : an array of directories that contain your configurations.</li>
-<li><a href="#loadFiles">files</a>  : an array of files that contain your configurations.</li>
+<li><a href="#loadFiles">files</a>  : an array of files that contain your configurations.        </li>
 <li><a href="#monitoring">monitor</a> : set to true to monitor changes to configuration files.</li>
 <li><code>ignoreMissing</code> : By default <code>gofigure</code> will ignore missing directories. Set this to false to precent the ignoring of missing configuration directories.</li>
 <li><a href="#environments">environment</a> : By default will look for <code>process.env.NODE_ENV</code> if this is not set then gofigure will read all properties. If you wish to explicity set the environment then set this property.</li>
+<li><code>defaultEnvironment</code> [<code>*</code>]: The key that represents default values to be set when an environment is used.</li>
 </ul>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 var gofigure = require(&quot;gofigure&quot;);
@@ -215,25 +215,18 @@ var dirLoader = gofigure({
 var dirLoader = gofigure({
   files : [process.env.HOME + &quot;/configs/config1.json&quot;, __dirname + &quot;/config1.json&quot;]
 });</code></pre>
-<p>You can load configurations asynchronously
-
-</p>
+<p>You can load configurations asynchronously</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">loader.load(function(err, config){
     var PORT = config.port, HOST = config.host;
 });</code></pre>
-<p>or synchronously
-
-</p>
+<p>or synchronously</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
 var loader = gofigure({locations : [__dirname + &quot;/configs&quot;]});
 var config = loader.loadSync();</code></pre>
-<p><a name="loadDir"></a>
-</p>
+<p><a name="loadDir"></a></p>
 <h3>Directories of configurations</h3>
-<p>To load directories that contain configuration files in the options object provide locations property that is an array of directories than contain your configurations.
-
-</p>
+<p>To load directories that contain configuration files in the options object provide locations property that is an array of directories than contain your configurations.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 var gofigure = require(&quot;gofigure&quot;);
 
@@ -241,21 +234,15 @@ var loader = gofigure({locations : [__dirname + &quot;/configs&quot;]});
 loader.load(function(err, config){
     var PORT = config.port, HOST = config.host;
 });</code></pre>
-<p>The order of the locations matter as it defines a precedence for files. For example suppose you have a directory of default configuration files, and on production you want to override those configuration with environment specific configurations with out changing your module or source controlled files.
-
-</p>
+<p>The order of the locations matter as it defines a precedence for files. For example suppose you have a directory of default configuration files, and on production you want to override those configuration with environment specific configurations with out changing your module or source controlled files.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
 var loader = gofigure({locations : [&quot;/prod/configs&quot;, __dirname + &quot;/configs&quot;]});
 loader.load(function(err, config){
     var PORT = config.port, HOST = config.host;
 });</code></pre>
-<p>Here any production configuration files found in <code>/prod/configs</code> will override the properties in <code>__dirname + &quot;/configs&quot;</code>.
-
-</p>
-<p>Another use case might be in development where you have default properties and instead of altering the source controlled files the developer can override them by putting them in their home directory.
-
-</p>
+<p>Here any production configuration files found in <code>/prod/configs</code> will override the properties in <code>__dirname + &quot;/configs&quot;</code>.</p>
+<p>Another use case might be in development where you have default properties and instead of altering the source controlled files the developer can override them by putting them in their home directory.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 var HOME = process.env.HOME;
 
@@ -263,33 +250,22 @@ var loader = gofigure({locations : [ HOME + &quot;/yourApp/configs&quot;, __dirn
 loader.load(function(err, config){
     var PORT = config.port, HOST = config.host;
 });</code></pre>
-<p><a name="loadFiles"></a>
-</p>
+<p><a name="loadFiles"></a></p>
 <h3>Files</h3>
-<p>You may also load specific files rather than entire directories.
-
-</p>
+<p>You may also load specific files rather than entire directories.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
 var loader = gofigure({files : [&quot;/prod/configs/config1.json&quot;, __dirname + &quot;/config.json&quot;]});
 loader.load(function(err, config){
     var PORT = config.port, HOST = config.host;
 });</code></pre>
-<p>Again order matters <code>/prod/configs/config1.json</code> will override <code>__dirname + &quot;/config.json&quot;</code>
-
-</p>
-<p><a name="monitoring"></a>
-</p>
+<p>Again order matters <code>/prod/configs/config1.json</code> will override <code>__dirname + &quot;/config.json&quot;</code></p>
+<p><a name="monitoring"></a></p>
 <h2>Monitoring</h2>
-<p>Gofigure supports the monitoring of changes to configuration files.
-
-</p>
-<p><a name="monitoringAll"></a>
-</p>
+<p>Gofigure supports the monitoring of changes to configuration files. </p>
+<p><a name="monitoringAll"></a></p>
 <h3>All files</h3>
-<p>To enable monitoring you can specify monitor to true in the options.
-
-</p>
+<p>To enable monitoring you can specify monitor to true in the options.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
 var loader = gofigure({monitor : true, files : [&quot;/prod/configs/config1.json&quot;, __dirname + &quot;/config.json&quot;]});
@@ -298,20 +274,17 @@ var config = loader.loadSync();
 loading.on(&quot;my.cool.property&quot;, function(newValue){
   //...do something
 });</code></pre>
-<p><a name="monitoringSome"></a>
-</p>
+<p><a name="monitoringSome"></a></p>
 <h3>Individual Files</h3>
-<p>To monitor certain files you can use the files property and with object that have a <code>monitor : true</code> KV pair.
-
-</p>
+<p>To monitor certain files you can use the files property and with object that have a <code>monitor : true</code> KV pair.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
 var loader = gofigure({files : [
-  {
-    file : &quot;/prod/configs/config1.json&quot;,
+  { 
+    file : &quot;/prod/configs/config1.json&quot;, 
     monitor : true
 
-  },
+  }, 
   __dirname + &quot;/config.json&quot;
 ]});
 var config = loader.loadSync();
@@ -319,15 +292,10 @@ var config = loader.loadSync();
 loading.on(&quot;my.cool.property&quot;, function(newValue){
   //...do something
 });</code></pre>
-<p>Just <code>config1.json</code> will be monitored for changes.
-
-</p>
-<p><a name="monitoringSyntax"></a>
-</p>
+<p>Just <code>config1.json</code> will be monitored for changes.</p>
+<p><a name="monitoringSyntax"></a></p>
 <h3>Property topic syntax</h3>
-<p>To listen to all properties
-
-</p>
+<p>To listen to all properties</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">loading.on(function(config){
   //...do something
 });
@@ -339,9 +307,7 @@ loading.on(function(nameOfPropertyChanged, config){
 loading.on(function(nameOfPropertyChanged, value, config){
   //...do something
 });</code></pre>
-<p>To listen to specific properties
-
-</p>
+<p>To listen to specific properties</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">loading.on(&quot;my.cool.property&quot;, function(newValue){
   //...do something
 });
@@ -353,9 +319,7 @@ loading.on(&quot;my.cool.property&quot;, function(newValue, config){
 loading.on(&quot;my.cool.property&quot;, function(nameOfPropertyChanged, value, config){
   //...do something
 });</code></pre>
-<p>Wild cards
-
-</p>
+<p>Wild cards</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 //listen to any property changed on the my.cool object
 loading.on(&quot;my.cool.*&quot;, function(propName, newValue){
@@ -380,48 +344,33 @@ loading.on(&quot;my.cool.{property|otherProperty}&quot;, function(propName, newV
   //...do something
 });
 
-//listen to the change of property or otherProperty on the my cool or
+//listen to the change of property or otherProperty on the my cool or 
 //notCool object.
 loading.on(&quot;my.{cool|notCool}.{property|otherProperty}&quot;, function(propName, newValue){
   //...do something
 });</code></pre>
-<p><a name="monitoringCB"></a>
-</p>
+<p><a name="monitoringCB"></a></p>
 <h3>Callback Arguments</h3>
-<p>The property change callback will pass in the following values depending on the arity of the callback.
-
-</p>
-<p>If 1 argument is expected then just the callback invoked with the new value is a.
-
-</p>
+<p>The property change callback will pass in the following values depending on the arity of the callback.</p>
+<p>If 1 argument is expected then just the callback invoked with the new value is a.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 loading.on(&quot;my.cool.property&quot;, function(newValue){
   //...do something
 });</code></pre>
-<p>If two arguments are expected then it is invoked with the property name and the new value.
-
-
-</p>
+<p>If two arguments are expected then it is invoked with the property name and the new value.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 loading.on(&quot;my.cool.property&quot;, function(propName, newValue){
   //...do something
 });</code></pre>
-<p>Other wise the callback is invoked with the propertyName, newValue and the configuration object.
-
-</p>
+<p>Other wise the callback is invoked with the propertyName, newValue and the configuration object.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 loading.on(&quot;my.cool.property&quot;, function(propName, newValue, configObject){
   //...do something
 });</code></pre>
-<p><a name="environments"></a>
-</p>
+<p><a name="environments"></a></p>
 <h2>Environments</h2>
-<p><code>gofigure</code> also supports environments, by default it will look for <code>NODE_ENV</code> and if it is set then it will use it.
-
-</p>
-<p>The following is an example configuration file
-
-</p>
+<p><code>gofigure</code> also supports environments, by default it will look for <code>NODE_ENV</code> and if it is set then it will use it. </p>
+<p>The following is an example configuration file</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 {
     &quot;development&quot;: {
@@ -432,7 +381,7 @@ loading.on(&quot;my.cool.property&quot;, function(propName, newValue, configObje
                         {
                             &quot;type&quot;:&quot;RollingFileAppender&quot;,
                             &quot;file&quot;:&quot;/var/log/myApp/patio.log&quot;
-                        },
+                        },                                
                         {
                             &quot;type&quot;:&quot;ConsoleAppender&quot;
                         }
@@ -463,7 +412,7 @@ loading.on(&quot;my.cool.property&quot;, function(propName, newValue, configObje
           &quot;port&quot; : &quot;80&quot;
         },
         &quot;MYSQL_DB&quot; : &quot;mysql://test:testpass@prod.mydomain.com:3306/prod_db&quot;,
-        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@prod.mydomain.com:27017/prd_db&quot;
+        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@prod.mydomain.com:27017/prd_db&quot;        
     },
     &quot;test&quot;: {
         &quot;logging&quot;:{
@@ -473,7 +422,7 @@ loading.on(&quot;my.cool.property&quot;, function(propName, newValue, configObje
                         {
                             &quot;type&quot;:&quot;RollingFileAppender&quot;,
                             &quot;file&quot;:&quot;/var/log/myApp/patio.log&quot;
-                        }
+                        }                                                        
                     ]
                 }
         },
@@ -482,12 +431,10 @@ loading.on(&quot;my.cool.property&quot;, function(propName, newValue, configObje
           &quot;port&quot; : &quot;80&quot;
         },
         &quot;MYSQL_DB&quot; : &quot;mysql://test:testpass@test.mydomain.com:3306/test_db&quot;,
-        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@test.mydomain.com:27017/test_db&quot;
+        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@test.mydomain.com:27017/test_db&quot;        
     }
 }</code></pre>
-<p>To load just the development properties set the <code>environment</code> to development.
-
-</p>
+<p>To load just the development properties set the <code>environment</code> to development.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 var gofigure = require(&quot;gofigure&quot;),
     patio = require(&quot;patio&quot;),
@@ -516,15 +463,64 @@ var loader = gofigure({
   .load(function(){
     //do something
   })</code></pre>
-
-
-<hr>
-
-    
-  <h2>License</h2>
-<p>MIT <a href="https://github.com/C2FO/gofigure/raw/master/LICENSE">https://github.com/C2FO/gofigure/raw/master/LICENSE</a>
-
-</p>
+<p>You may also share properties across enviroments by using <code>*</code> or overriding <code>defaultEnvironment</code> when initializing.</p>
+<pre class='prettyprint linenums lang-js'><code class="lang-json">
+{
+    &quot;*&quot;: {
+         &quot;logging&quot;:{
+            &quot;patio&quot;:{
+                &quot;level&quot;:&quot;ERROR&quot;,
+                &quot;appenders&quot;:[
+                    {
+                        &quot;type&quot;:&quot;RollingFileAppender&quot;,
+                        &quot;file&quot;:&quot;/var/log/myApp/patio.log&quot;
+                    }
+                ]
+            }
+        },
+        &quot;app&quot; : {
+            &quot;host&quot; : &quot;localhost&quot;,
+            &quot;port&quot; : &quot;8088&quot;
+        },
+        &quot;MYSQL_DB&quot; : &quot;mysql://test:testpass@localhost:3306/db&quot;,
+        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@localhost:27017/db&quot;
+    },
+    &quot;development&quot;: {
+        &quot;logging&quot;:{
+              &quot;patio&quot;:{
+                &quot;appenders&quot;:[{
+                    &quot;type&quot;:&quot;ConsoleAppender&quot;
+                }]
+            }
+        },
+        &quot;MYSQL_DB&quot; : &quot;mysql://test:testpass@localhost:3306/dev_db&quot;,
+        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@localhost:27017/dev_db&quot;
+    },
+    &quot;production&quot;: {
+        &quot;app&quot; : {
+            &quot;host&quot; : &quot;prod.mydomain.com&quot;,
+            &quot;port&quot; : &quot;80&quot;
+        },
+        &quot;MYSQL_DB&quot; : &quot;mysql://test:testpass@prod.mydomain.com:3306/prod_db&quot;,
+        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@prod.mydomain.com:27017/prd_db&quot;
+    },
+    &quot;test&quot;: {
+        &quot;logging&quot;:{
+            &quot;patio&quot;:{
+                &quot;level&quot;:&quot;INFO&quot;
+            }
+        },
+        &quot;app&quot; : {
+          &quot;host&quot; : &quot;test.mydomain.com&quot;,
+          &quot;port&quot; : &quot;80&quot;
+        },
+        &quot;MYSQL_DB&quot; : &quot;mysql://test:testpass@test.mydomain.com:3306/test_db&quot;,
+        &quot;MONGO_DB&quot; : &quot;mongodb://test:testpass@test.mydomain.com:27017/test_db&quot;
+    }
+}</code></pre>
+<p>Now each environment only has to override properties specific to that env.</p>
+<h2>License</h2>
+<p>MIT <a href="https://github.com/C2FO/gofigure/raw/master/LICENSE">https://github.com/C2FO/gofigure/raw/master/LICENSE</a></p>
 <h2>Meta</h2>
 <ul>
 <li>Code: <code>git clone git://github.com/c2fo/gofigure.git</code></li>
@@ -532,6 +528,9 @@ var loader = gofigure({
 </ul>
 
 
+<hr>
+
+Documentation generated using <a href="https://github.com/doug-martin/coddoc">coddoc</a>.
 
 
 </div>
