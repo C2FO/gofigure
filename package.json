@@ -1,25 +1,48 @@
 {
-    "name":"gofigure",
-    "description":"Configuration helper for node",
-    "version":"0.0.2",
-    "keywords":["Config", "Configuration", "Configurations", "JSON", "Properties", "Property"],
+    "name": "gofigure",
+    "description": "Configuration helper for node",
+    "version": "0.0.2",
+    "scripts": {
+        "test": "grunt it"
+    },
+    "keywords": [
+        "Config",
+        "Configuration",
+        "Configurations",
+        "JSON",
+        "Properties",
+        "Property"
+    ],
     "homepage": "http://c2fo.github.com/gofigure",
-    "repository":{
-        "type":"git",
-        "url":"git@github.com:C2FO/gofigure.git"
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:C2FO/gofigure.git"
     },
-    "dependencies":{
-        "comb":">=0.1.1"
+    "dependencies": {
+        "comb": ">=0.1.1",
+        "function-extended": "0.0.3",
+        "is-extended": "0.0.4",
+        "array-extended": "0.0.4",
+        "promise-extended": "0.0.3",
+        "extended": "0.0.3",
+        "it": "~0.2.2",
+        "object-extended": "0.0.3",
+        "declare.js": "0.0.4",
+        "glob": "~3.1.21",
+        "grunt-contrib-jshint": "~0.2.0"
     },
-    "devVependencies":{
-        "it":">=0.0.2"
+    "devDependencies": {
+        "it": "~0.2.0",
+        "grunt": "~0.4.0",
+        "grunt-it": "~0.2.4",
+        "grunt-contrib-jshint": "~0.2.0"
     },
-    "author":"Doug Martin (doug.martin@pollenware.com)",
-    "main":"index.js",
-    "directories":{
-        "lib":"lib"
+    "author": "Doug Martin (doug.martin@pollenware.com)",
+    "main": "index.js",
+    "directories": {
+        "lib": "lib"
     },
-    "engines":{
-        "node":">= 0.6.1"
+    "engines": {
+        "node": ">= 0.6.1"
     }
 }

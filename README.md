@@ -1,4 +1,6 @@
-#gofigure
+[![Build Status](https://travis-ci.org/C2FO/gofigure.png)](https://travis-ci.org/C2FO/gofigure)
+
+# gofigure
 
 Gofigure is a configuration tool for node to help in the gathering and monitoring of configuration files in node. 
 
@@ -6,7 +8,7 @@ Gofigure is a configuration tool for node to help in the gathering and monitorin
 
     npm install gofigure
     
-#Usage
+# Usage
 
    
   * [Loading A Configuration](#load)        
@@ -20,7 +22,7 @@ Gofigure is a configuration tool for node to help in the gathering and monitorin
   * [Environments](#environments)
 
 <a name="load"></a>
-##Loading configurations
+## Loading configurations
 
 Gofigure currently handles the loading of JSON files for configurations. 
 
@@ -31,6 +33,7 @@ To Get an instance of a configuration object use the `gofigure` method. The `gof
   * [monitor](#monitoring) : set to true to monitor changes to configuration files.
   * `ignoreMissing` : By default `gofigure` will ignore missing directories. Set this to false to precent the ignoring of missing configuration directories.
   * [environment](#environments) : By default will look for `process.env.NODE_ENV` if this is not set then gofigure will read all properties. If you wish to explicity set the environment then set this property.
+  * `defaultEnvironment` [`*`]: The key that represents default values to be set when an environment is used.
 
 ```javascript 
 
@@ -68,7 +71,7 @@ var config = loader.loadSync();
 ```
 
 <a name="loadDir"></a>
-###Directories of configurations
+### Directories of configurations
 To load directories that contain configuration files in the options object provide locations property that is an array of directories than contain your configurations.
 
 ```javascript
@@ -107,7 +110,7 @@ loader.load(function(err, config){
 ```
 
 <a name="loadFiles"></a>
-###Files
+### Files
 
 You may also load specific files rather than entire directories.
 
@@ -123,12 +126,12 @@ loader.load(function(err, config){
 Again order matters `/prod/configs/config1.json` will override `__dirname + "/config.json"`
 
 <a name="monitoring"></a>
-##Monitoring
+## Monitoring
 
 Gofigure supports the monitoring of changes to configuration files. 
 
 <a name="monitoringAll"></a>
-###All files
+### All files
 
 To enable monitoring you can specify monitor to true in the options.
 
@@ -143,7 +146,7 @@ loading.on("my.cool.property", function(newValue){
 });
 ```
 <a name="monitoringSome"></a>
-###Individual Files
+### Individual Files
 
 To monitor certain files you can use the files property and with object that have a `monitor : true` KV pair.
 
@@ -167,7 +170,7 @@ loading.on("my.cool.property", function(newValue){
 Just `config1.json` will be monitored for changes.
 
 <a name="monitoringSyntax"></a>
-###Property topic syntax
+### Property topic syntax
 
 To listen to all properties
 
@@ -236,7 +239,7 @@ loading.on("my.{cool|notCool}.{property|otherProperty}", function(propName, newV
 ```
 
 <a name="monitoringCB"></a>
-###Callback Arguments
+### Callback Arguments
 
 
 The property change callback will pass in the following values depending on the arity of the callback.
@@ -382,6 +385,68 @@ var loader = gofigure({
   })
 
 ```
+
+You may also share properties across enviroments by using `*` or overriding `defaultEnvironment` when initializing.
+
+```json
+
+{
+    "*": {
+         "logging":{
+            "patio":{
+                "level":"ERROR",
+                "appenders":[
+                    {
+                        "type":"RollingFileAppender",
+                        "file":"/var/log/myApp/patio.log"
+                    }
+                ]
+            }
+        },
+        "app" : {
+            "host" : "localhost",
+            "port" : "8088"
+        },
+        "MYSQL_DB" : "mysql://test:testpass@localhost:3306/db",
+        "MONGO_DB" : "mongodb://test:testpass@localhost:27017/db"
+    },
+    "development": {
+        "logging":{
+  	        "patio":{
+                "appenders":[{
+                    "type":"ConsoleAppender"
+                }]
+            }
+        },
+        "MYSQL_DB" : "mysql://test:testpass@localhost:3306/dev_db",
+        "MONGO_DB" : "mongodb://test:testpass@localhost:27017/dev_db"
+    },
+    "production": {
+        "app" : {
+            "host" : "prod.mydomain.com",
+            "port" : "80"
+        },
+        "MYSQL_DB" : "mysql://test:testpass@prod.mydomain.com:3306/prod_db",
+        "MONGO_DB" : "mongodb://test:testpass@prod.mydomain.com:27017/prd_db"
+    },
+    "test": {
+        "logging":{
+            "patio":{
+                "level":"INFO"
+            }
+        },
+        "app" : {
+          "host" : "test.mydomain.com",
+          "port" : "80"
+        },
+        "MYSQL_DB" : "mysql://test:testpass@test.mydomain.com:3306/test_db",
+        "MONGO_DB" : "mongodb://test:testpass@test.mydomain.com:27017/test_db"
+    }
+}
+
+```
+
+Now each environment only has to override properties specific to that env.
 
 License
 -------
