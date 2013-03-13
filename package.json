@@ -34,7 +34,7 @@
     "devDependencies": {
         "it": "~0.2.0",
         "grunt": "~0.4.0",
-        "grunt-it": "~0.2.4",
+        "grunt-it": "~0.3.0",
         "grunt-contrib-jshint": "~0.2.0"
     },
     "author": "Doug Martin (doug.martin@pollenware.com)",
