@@ -215,7 +215,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         called = 0;
                                         _next(++index);
                                     } else {
@@ -272,7 +272,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         called = 0;
                                         _next(++index);
                                     } else {
@@ -331,7 +331,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         called = 0;
                                         _next(++index);
                                     } else {
@@ -364,24 +364,26 @@ it.describe("gofigure",function (it) {
 
         it.describe("with an env", function (it) {
             it.should("monitor configurations of files", function (next) {
-                var res = [], called = 0, configs = [];
+                var called = 0, configs = [];
+                var res = {};
                 ["development", "production", "test"].forEach(function (env) {
                     var config = goFigure({monitor: true, environment: env, files: [__dirname + "/configs/config-env/config.json"]});
                     config.loadSync();
                     configs.push(config);
+                    res[env] = [];
                     ["a", "b.{c|d}", "e", "e.g", "e.g.*"].forEach(function (topic) {
                         config.on(topic, function (key, val, config) {
                             called++;
-                            res.push({env: env, key: key, val: _.isObject(val) ? _.deepMerge({}, val) : val});
+                            res[env].push({key: key, val: _.isObject(val) ? _.deepMerge({}, val) : val});
                         });
                     });
                 });
                 var changes = [
                     [_.deepMerge({}, envConf, {development: {a: 6}, production: {a: 11}, test: {a: 16}}), 3],
                     [_.deepMerge({}, envConf, {development: {b: {c: 7}}, production: {b: {c: 12}}, test: {b: {c: 17}}}), 6],
-                    [_.deepMerge({}, envConf, {development: {b: {d: 8}}, production: {b: {d: 13}}, test: {b: {d: 18}}}), 2],
-                    [_.deepMerge({}, envConf, {development: {e: {f: 9}}, production: {e: {f: 14}}, test: {e: {f: 19}}}), 2],
-                    [_.deepMerge({}, envConf, {development: {e: {g: {h: 10}}}, production: {e: {g: {h: 15}}}, test: {e: {g: {h: 20}}}}), 3]
+                    [_.deepMerge({}, envConf, {development: {b: {d: 8}}, production: {b: {d: 13}}, test: {b: {d: 18}}}), 6],
+                    [_.deepMerge({}, envConf, {development: {e: {f: 9}}, production: {e: {f: 14}}, test: {e: {f: 19}}}), 6],
+                    [_.deepMerge({}, envConf, {development: {e: {g: {h: 10}}}, production: {e: {g: {h: 15}}}, test: {e: {g: {h: 20}}}}), 9]
                 ];
                 var l = changes.length;
                 (function _next(index) {
@@ -392,9 +394,11 @@ it.describe("gofigure",function (it) {
                             } else {
                                 (function to() {
                                     setTimeout(function () {
-                                        if (called >= changes[index][1]) {
+                                        if (called === changes[index][1]) {
                                             called = 0;
                                             _next(++index);
+                                        } else if (called > changes[index][1]) {
+                                            next(new Error("Called to many times"));
                                         } else {
                                             to();
                                         }
@@ -404,38 +408,40 @@ it.describe("gofigure",function (it) {
                         });
                     } else {
                         _.invoke(configs, "stop");
-                        assert.deepEqual(res, [
-                            {"env": "development", "key": "a", "val": 6},
-                            {"env": "production", "key": "a", "val": 11},
-                            {"env": "test", "key": "a", "val": 16},
-                            {"env": "development", "key": "a", "val": 1},
-                            {"env": "development", "key": "b.c", "val": 7},
-                            {"env": "production", "key": "a", "val": 6},
-                            {"env": "production", "key": "b.c", "val": 12},
-                            {"env": "test", "key": "a", "val": 11},
-                            {"env": "test", "key": "b.c", "val": 17},
-                            {"env": "development", "key": "b.c", "val": 2},
-                            {"env": "development", "key": "b.d", "val": 8},
-                            {"env": "production", "key": "b.c", "val": 7},
-                            {"env": "production", "key": "b.d", "val": 13},
-                            {"env": "test", "key": "b.c", "val": 12},
-                            {"env": "test", "key": "b.d", "val": 18},
-                            {"env": "development", "key": "b.d", "val": 3},
-                            {"env": "development", "key": "e", "val": {"f": 9, "g": {"h": 5}}},
-                            {"env": "production", "key": "b.d", "val": 8},
-                            {"env": "production", "key": "e", "val": {"f": 14, "g": {"h": 10}}},
-                            {"env": "test", "key": "b.d", "val": 13},
-                            {"env": "test", "key": "e", "val": {"f": 19, "g": {"h": 15}}},
-                            {"env": "development", "key": "e.g.h", "val": 10},
-                            {"env": "development", "key": "e.g", "val": {"h": 10}},
-                            {"env": "development", "key": "e", "val": {"f": 4, "g": {"h": 10}}},
-                            {"env": "production", "key": "e.g.h", "val": 15},
-                            {"env": "production", "key": "e.g", "val": {"h": 15}},
-                            {"env": "production", "key": "e", "val": {"f": 9, "g": {"h": 15}}},
-                            {"env": "test", "key": "e.g.h", "val": 20},
-                            {"env": "test", "key": "e.g", "val": {"h": 20}},
-                            {"env": "test", "key": "e", "val": {"f": 14, "g": {"h": 20}}}
-                        ]);
+                        assert.deepEqual(res, {"development": [
+                            {"key": "a", "val": 6},
+                            {"key": "a", "val": 1},
+                            {"key": "b.c", "val": 7},
+                            {"key": "b.c", "val": 2},
+                            {"key": "b.d", "val": 8},
+                            {"key": "b.d", "val": 3},
+                            {"key": "e", "val": {"f": 9, "g": {"h": 5}}},
+                            {"key": "e.g.h", "val": 10},
+                            {"key": "e.g", "val": {"h": 10}},
+                            {"key": "e", "val": {"f": 4, "g": {"h": 10}}}
+                        ], "production": [
+                            {"key": "a", "val": 11},
+                            {"key": "a", "val": 6},
+                            {"key": "b.c", "val": 12},
+                            {"key": "b.c", "val": 7},
+                            {"key": "b.d", "val": 13},
+                            {"key": "b.d", "val": 8},
+                            {"key": "e", "val": {"f": 14, "g": {"h": 10}}},
+                            {"key": "e.g.h", "val": 15},
+                            {"key": "e.g", "val": {"h": 15}},
+                            {"key": "e", "val": {"f": 9, "g": {"h": 15}}}
+                        ], "test": [
+                            {"key": "a", "val": 16},
+                            {"key": "a", "val": 11},
+                            {"key": "b.c", "val": 17},
+                            {"key": "b.c", "val": 12},
+                            {"key": "b.d", "val": 18},
+                            {"key": "b.d", "val": 13},
+                            {"key": "e", "val": {"f": 19, "g": {"h": 15}}},
+                            {"key": "e.g.h", "val": 20},
+                            {"key": "e.g", "val": {"h": 20}},
+                            {"key": "e", "val": {"f": 14, "g": {"h": 20}}}
+                        ]});
                         next();
                     }
                 })(0);
@@ -471,7 +477,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         called = 0;
                                         _next(++index);
                                     } else {
@@ -528,7 +534,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         called = 0;
                                         _next(++index);
                                     } else {
@@ -587,7 +593,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         called = 0;
                                         _next(++index);
                                     } else {
@@ -620,24 +626,25 @@ it.describe("gofigure",function (it) {
 
         it.describe("with an env", function (it) {
             it.should("monitor configurations of files", function (next) {
-                var res = [], called = 0, configs = [];
+                var res = {}, called = 0, configs = [];
                 ["development", "production", "test"].forEach(function (env) {
                     var config = goFigure({monitor: true, environment: env, files: [__dirname + "/configs/config-env/config.json"]});
                     config.loadSync();
                     configs.push(config);
+                    res[env] = [];
                     ["a", "b.{c|d}", "e", "e.g", "e.g.*"].forEach(function (topic) {
                         config.addListener(topic, function (key, val, config) {
                             called++;
-                            res.push({env: env, key: key, val: _.isObject(val) ? _.deepMerge({}, val) : val});
+                            res[env].push({key: key, val: _.isObject(val) ? _.deepMerge({}, val) : val});
                         });
                     });
                 });
                 var changes = [
                     [_.deepMerge({}, envConf, {development: {a: 6}, production: {a: 11}, test: {a: 16}}), 3],
                     [_.deepMerge({}, envConf, {development: {b: {c: 7}}, production: {b: {c: 12}}, test: {b: {c: 17}}}), 6],
-                    [_.deepMerge({}, envConf, {development: {b: {d: 8}}, production: {b: {d: 13}}, test: {b: {d: 18}}}), 2],
-                    [_.deepMerge({}, envConf, {development: {e: {f: 9}}, production: {e: {f: 14}}, test: {e: {f: 19}}}), 2],
-                    [_.deepMerge({}, envConf, {development: {e: {g: {h: 10}}}, production: {e: {g: {h: 15}}}, test: {e: {g: {h: 20}}}}), 3]
+                    [_.deepMerge({}, envConf, {development: {b: {d: 8}}, production: {b: {d: 13}}, test: {b: {d: 18}}}), 6],
+                    [_.deepMerge({}, envConf, {development: {e: {f: 9}}, production: {e: {f: 14}}, test: {e: {f: 19}}}), 6],
+                    [_.deepMerge({}, envConf, {development: {e: {g: {h: 10}}}, production: {e: {g: {h: 15}}}, test: {e: {g: {h: 20}}}}), 9]
                 ];
                 var l = changes.length;
                 (function _next(index) {
@@ -648,7 +655,7 @@ it.describe("gofigure",function (it) {
                             } else {
                                 (function to() {
                                     setTimeout(function () {
-                                        if (called >= changes[index][1]) {
+                                        if (called === changes[index][1]) {
                                             called = 0;
                                             _next(++index);
                                         } else {
@@ -660,38 +667,40 @@ it.describe("gofigure",function (it) {
                         });
                     } else {
                         _.invoke(configs, "stop");
-                        assert.deepEqual(res, [
-                            {"env": "development", "key": "a", "val": 6},
-                            {"env": "production", "key": "a", "val": 11},
-                            {"env": "test", "key": "a", "val": 16},
-                            {"env": "development", "key": "a", "val": 1},
-                            {"env": "development", "key": "b.c", "val": 7},
-                            {"env": "production", "key": "a", "val": 6},
-                            {"env": "production", "key": "b.c", "val": 12},
-                            {"env": "test", "key": "a", "val": 11},
-                            {"env": "test", "key": "b.c", "val": 17},
-                            {"env": "development", "key": "b.c", "val": 2},
-                            {"env": "development", "key": "b.d", "val": 8},
-                            {"env": "production", "key": "b.c", "val": 7},
-                            {"env": "production", "key": "b.d", "val": 13},
-                            {"env": "test", "key": "b.c", "val": 12},
-                            {"env": "test", "key": "b.d", "val": 18},
-                            {"env": "development", "key": "b.d", "val": 3},
-                            {"env": "development", "key": "e", "val": {"f": 9, "g": {"h": 5}}},
-                            {"env": "production", "key": "b.d", "val": 8},
-                            {"env": "production", "key": "e", "val": {"f": 14, "g": {"h": 10}}},
-                            {"env": "test", "key": "b.d", "val": 13},
-                            {"env": "test", "key": "e", "val": {"f": 19, "g": {"h": 15}}},
-                            {"env": "development", "key": "e.g.h", "val": 10},
-                            {"env": "development", "key": "e.g", "val": {"h": 10}},
-                            {"env": "development", "key": "e", "val": {"f": 4, "g": {"h": 10}}},
-                            {"env": "production", "key": "e.g.h", "val": 15},
-                            {"env": "production", "key": "e.g", "val": {"h": 15}},
-                            {"env": "production", "key": "e", "val": {"f": 9, "g": {"h": 15}}},
-                            {"env": "test", "key": "e.g.h", "val": 20},
-                            {"env": "test", "key": "e.g", "val": {"h": 20}},
-                            {"env": "test", "key": "e", "val": {"f": 14, "g": {"h": 20}}}
-                        ]);
+                        assert.deepEqual(res, {"development": [
+                            {"key": "a", "val": 6},
+                            {"key": "a", "val": 1},
+                            {"key": "b.c", "val": 7},
+                            {"key": "b.c", "val": 2},
+                            {"key": "b.d", "val": 8},
+                            {"key": "b.d", "val": 3},
+                            {"key": "e", "val": {"f": 9, "g": {"h": 5}}},
+                            {"key": "e.g.h", "val": 10},
+                            {"key": "e.g", "val": {"h": 10}},
+                            {"key": "e", "val": {"f": 4, "g": {"h": 10}}}
+                        ], "production": [
+                            {"key": "a", "val": 11},
+                            {"key": "a", "val": 6},
+                            {"key": "b.c", "val": 12},
+                            {"key": "b.c", "val": 7},
+                            {"key": "b.d", "val": 13},
+                            {"key": "b.d", "val": 8},
+                            {"key": "e", "val": {"f": 14, "g": {"h": 10}}},
+                            {"key": "e.g.h", "val": 15},
+                            {"key": "e.g", "val": {"h": 15}},
+                            {"key": "e", "val": {"f": 9, "g": {"h": 15}}}
+                        ], "test": [
+                            {"key": "a", "val": 16},
+                            {"key": "a", "val": 11},
+                            {"key": "b.c", "val": 17},
+                            {"key": "b.c", "val": 12},
+                            {"key": "b.d", "val": 18},
+                            {"key": "b.d", "val": 13},
+                            {"key": "e", "val": {"f": 19, "g": {"h": 15}}},
+                            {"key": "e.g.h", "val": 20},
+                            {"key": "e.g", "val": {"h": 20}},
+                            {"key": "e", "val": {"f": 14, "g": {"h": 20}}}
+                        ]});
                         next();
                     }
                 })(0);
@@ -729,7 +738,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         called = 0;
                                         _next(++index);
                                     } else {
@@ -785,7 +794,7 @@ it.describe("gofigure",function (it) {
                         } else {
                             (function to() {
                                 setTimeout(function () {
-                                    if (called >= changes[index][1]) {
+                                    if (called === changes[index][1]) {
                                         config1.removeListener("a", l1);
                                         called = 0;
                                         _next(++index);
@@ -812,6 +821,7 @@ it.describe("gofigure",function (it) {
 
     });
 }).as(module);
+
 
 
 
