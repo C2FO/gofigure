@@ -26,7 +26,8 @@
         "extended": "0.0.3",
         "object-extended": "0.0.3",
         "declare.js": "0.0.4",
-        "glob": "~3.1.21"
+        "glob": "~3.1.21",
+        "node-etcd": "4.0.0"
     },
     "devDependencies": {
         "it": "~0.2.0",
