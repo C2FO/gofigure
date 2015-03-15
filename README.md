@@ -6,7 +6,17 @@ Gofigure is a configuration tool for node to help in the gathering and monitorin
 
 # Installation
 
-    npm install gofigure
+For nodejs >= 0.10 and iojs:
+
+```
+$ npm install gofigure
+```
+
+For nodejs < 0.10:
+
+```
+$ npm install gofigure@0.1.2
+```
     
 # Usage
 
@@ -14,12 +24,14 @@ Gofigure is a configuration tool for node to help in the gathering and monitorin
   * [Loading A Configuration](#load)        
     * [Directories](#loadDir)         
     * [Files](#loadFiles)
+    * [Etcd](#loadEtcd)
   * [Monitoring Property Changes](#monitoring)
     * [Monitoring All Files](#monitoringAll)   
     * [Monitoring Certain Files](#monitoringSome)   
     * [Property Topic Syntax](#monitoringSyntax)
     * [Property Change Callback](#monitoringCB)
   * [Environments](#environments)
+  * [Node Type](#type)
 
 <a name="load"></a>
 ## Loading configurations
@@ -124,6 +136,43 @@ loader.load(function(err, config){
 ```
 
 Again order matters `/prod/configs/config1.json` will override `__dirname + "/config.json"`
+
+<a name="loadEtcd"></a>
+### Etcd
+
+You may also load from a centralized Etcd server.
+
+```javascript
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+
+var loader = gofigure({locations : [ETCD_CONFIG]});
+loader.load(function(err, config){
+    var PORT = config.port, HOST = config.host;
+});
+```
+
+If your Etcd server requires SSL/TLS and specific certificates, ssloptions can be passed as well.
+
+```javascript
+var gofigure = require("gofigure");
+
+var certs = {
+    ca: [ fs.readFileSync('ca.pem') ],
+    cert: fs.readFileSync('cert.pem'),
+    key: fs.readFileSync('key.pem')
+};
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname", ssloptions: certs};
+
+var loader = gofigure({locations : [ETCD_CONFIG]});
+loader.load(function(err, config){
+    var PORT = config.port, HOST = config.host;
+});
+```
+
+See [below](#etcdconfig) for notes about the supported Etcd layout.
 
 <a name="monitoring"></a>
 ## Monitoring
@@ -447,6 +496,98 @@ You may also share properties across enviroments by using `*` or overriding `def
 ```
 
 Now each environment only has to override properties specific to that env.
+
+<a name="type"></a>
+##Node Type
+
+Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default `gofigure` will look for `NODE_TYPE` and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the `environment` to production and `nodetype` to webapp.
+
+```javascript
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+
+var loader = gofigure({
+  locations : [ETCD_CONFIG],
+  environment : "production",
+  nodetype : "webapp"
+});
+```
+
+This can be defined in JSON as:
+
+```json
+{
+    "type": {
+        "production" : {
+            "webapp" : {
+                "host" : "prod.mydomain.com",
+                "port" : "80"
+            }
+        },
+        "development" : {
+            "webapp" : {
+                "host" : "localhost",
+                "port" : "8088"
+            }
+        }
+    }
+}
+```
+
+Please see [Etcd Notes](#etcdconfig) for the supported Etcd layout for `NODE_TYPE`.
+
+<a name="etcdconfig"></a>
+##Etcd Notes
+
+###Environment Layout
+
+The expected layout within Etcd is the following:
+
+127.0.0.1:4001/v2/keys/&lt;root&gt;/environment/&lt;environment name&gt;
+
+So, in the example above, `gofigure` will look for the following:
+
+```javascript
+process.env.NODE_ENV = "production";
+
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+```
+
+at this location within Etcd for keys:
+
+127.0.0.1:4001/v2/keys/appname/environment/production
+
+###Type Layout
+
+If process.env.NODE_TYPE is set, `gofigure` will look for the following:
+
+127.0.0.1:4001/v2/keys/&lt;root&gt;/environment/&lt;node type&gt;/&lt;environment name&gt;
+
+For the following example:
+
+```javascript
+process.env.NODE_ENV = "production";
+process.env.NODE_TYPE = "webapp";
+
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+```
+
+`gofigure` will look at this location within Etcd for keys:
+
+127.0.0.1:4001/v2/keys/appname/environment/type/webapp/production
+
+
+###Special Environment Names
+
+The following environment names are special and not be used with process.env.NODE_ENV:
+
+* &#42;
+* type
 
 License
 -------
