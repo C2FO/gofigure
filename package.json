@@ -19,13 +19,13 @@
         "url": "git@github.com:C2FO/gofigure.git"
     },
     "dependencies": {
-        "function-extended": "0.0.3",
-        "is-extended": "0.0.4",
-        "array-extended": "0.0.4",
-        "promise-extended": "0.0.3",
-        "extended": "0.0.3",
-        "object-extended": "0.0.3",
-        "declare.js": "0.0.4",
+        "function-extended": "0.0.9",
+        "is-extended": "0.0.10",
+        "array-extended": "0.0.11",
+        "promise-extended": "0.0.9",
+        "extended": "0.0.6",
+        "object-extended": "0.0.7",
+        "declare.js": "0.0.8",
         "glob": "~3.1.21",
         "node-etcd": "4.0.x"
     },
