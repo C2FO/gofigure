@@ -33,6 +33,12 @@ it.describe("gofigure.Loader", function (it) {
         assert.equal(loader.fileGlob, path.resolve(__dirname, "./configs/**/*.json"));
     });
 
+    it.should("properly configure the etcd endpoint", function () {
+        var loader = new Loader({endpoints: ["127.0.0.1:4001"], root: "/gruntit"});
+        assert.equal(loader.endpoints[0], ["127.0.0.1:4001"][0]);
+        assert.equal(loader.root, "/gruntit");
+    });
+
 
     it.beforeEach(function () {
         helper.createConfigs();
@@ -57,6 +63,12 @@ it.describe("gofigure.Loader", function (it) {
             assert.deepEqual(loader.config, helper.allDeepMerge());
         });
 
+        /* it.should("load from etcd", function () {
+            var loader = new Loader({endpoints: ["192.168.1.10:4001"], root: "/gruntit"});
+            assert.deepEqual(loader.loadSync(), helper.sharedEnvConf);
+            assert.deepEqual(loader.config, helper.sharedEnvConf);
+        }); */
+
     });
 
     it.describe("#load", function (it) {
@@ -75,6 +87,15 @@ it.describe("gofigure.Loader", function (it) {
                 assert.deepEqual(loader.config, helper.allDeepMerge());
             });
         });
+
+        /* it.should("load from etcd asynchronously", function () {
+            var loader = new Loader({endpoints: ["127.0.0.1:4001"], root: "/gruntit"});
+            return loader.load().then(function (conf) {
+                assert.deepEqual(conf, helper.sharedEnvConf);
+                assert.deepEqual(loader.config, helper.sharedEnvConf);
+            });
+        }); */
+
     });
 
     it.describe("#watch", function (it) {

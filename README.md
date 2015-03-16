@@ -40,7 +40,7 @@ Gofigure currently handles the loading of JSON files for configurations.
 
 To Get an instance of a configuration object use the `gofigure` method. The `gofigure` method takes an object that accepts the following options
 
-  * [locations](#loadDir)  : an array of directories that contain your configurations.
+  * [locations](#loadDir)  : an array of directories or [an Etcd server definition](#loadEtcd) that contain your configurations.
   * [files](#loadFiles)  : an array of files that contain your configurations.        
   * [monitor](#monitoring) : set to true to monitor changes to configuration files.
   * `ignoreMissing` : By default `gofigure` will ignore missing directories. Set this to false to precent the ignoring of missing configuration directories.
@@ -180,7 +180,7 @@ See [below](#etcdconfig) for notes about the supported Etcd layout.
 Gofigure supports the monitoring of changes to configuration files. 
 
 <a name="monitoringAll"></a>
-### All files
+### All files or Etcd server
 
 To enable monitoring you can specify monitor to true in the options.
 
@@ -544,7 +544,7 @@ Please see [Etcd Notes](#etcdconfig) for the supported Etcd layout for `NODE_TYP
 
 The expected layout within Etcd is the following:
 
-127.0.0.1:4001/v2/keys/&lt;root&gt;/environment/&lt;environment name&gt;
+127.0.0.1:4001/v2/keys/&lt;root&gt;/&lt;NODE_ENV&gt;
 
 So, in the example above, `gofigure` will look for the following:
 
@@ -558,13 +558,13 @@ var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
 
 at this location within Etcd for keys:
 
-127.0.0.1:4001/v2/keys/appname/environment/production
+127.0.0.1:4001/v2/keys/appname/production
 
 ###Type Layout
 
 If process.env.NODE_TYPE is set, `gofigure` will look for the following:
 
-127.0.0.1:4001/v2/keys/&lt;root&gt;/environment/&lt;node type&gt;/&lt;environment name&gt;
+127.0.0.1:4001/v2/keys/&lt;root&gt;/type/&lt;NODE_ENV&gt;/&lt;NODE_TYPE&gt;
 
 For the following example:
 
@@ -579,7 +579,7 @@ var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
 
 `gofigure` will look at this location within Etcd for keys:
 
-127.0.0.1:4001/v2/keys/appname/environment/type/webapp/production
+127.0.0.1:4001/v2/keys/appname/type/production/webapp
 
 
 ###Special Environment Names
