@@ -4,8 +4,11 @@ var it = require("it"),
     assert = require("assert"),
     path = require("path"),
     helper = require("./helper"),
-    Loader = require("../index").Loader;
+    Loader = require("../index").Loader,
+    nock = require("nock"),
+    fs = require("fs");
 
+nock.load(path.resolve(__dirname, "config-etcd/queries.json"));
 
 it.describe("gofigure.Loader", function (it) {
 
@@ -33,6 +36,12 @@ it.describe("gofigure.Loader", function (it) {
         assert.equal(loader.fileGlob, path.resolve(__dirname, "./configs/**/*.json"));
     });
 
+    it.should("properly configure the etcd endpoint", function () {
+        var loader = new Loader({endpoints: ["127.0.0.1:4001"], root: "/gruntit"});
+        assert.equal(loader.endpoints[0], ["127.0.0.1:4001"][0]);
+        assert.equal(loader.root, "/gruntit");
+    });
+
 
     it.beforeEach(function () {
         helper.createConfigs();
@@ -57,6 +66,12 @@ it.describe("gofigure.Loader", function (it) {
             assert.deepEqual(loader.config, helper.allDeepMerge());
         });
 
+        it.should("load from etcd", function () {
+            var loader = new Loader({endpoints: ["127.0.0.1:4001"], root: "/gruntit"});
+            assert.deepEqual(loader.loadSync(), helper.sharedEnvConf);
+            assert.deepEqual(loader.config, helper.sharedEnvConf);
+        });
+
     });
 
     it.describe("#load", function (it) {
@@ -75,6 +90,15 @@ it.describe("gofigure.Loader", function (it) {
                 assert.deepEqual(loader.config, helper.allDeepMerge());
             });
         });
+
+        it.should("load from etcd asynchronously", function () {
+            var loader = new Loader({endpoints: ["127.0.0.1:4001"], root: "/gruntit"});
+            return loader.load().then(function (conf) {
+                assert.deepEqual(conf, helper.sharedEnvConf);
+                assert.deepEqual(loader.config, helper.sharedEnvConf);
+            });
+        });
+
     });
 
     it.describe("#watch", function (it) {
@@ -89,11 +113,9 @@ it.describe("gofigure.Loader", function (it) {
                 loader.unWatch();
                 next();
             });
-            process.nextTick(function () {
+            setTimeout(function () {
                 helper.updateConfig("conf1", {a: 2});
             });
-
-
         });
 
         it.should("watch a file for changes in a directory", function (next) {
@@ -108,11 +130,20 @@ it.describe("gofigure.Loader", function (it) {
             setTimeout(function () {
                 helper.updateConfig("conf1", {a: 2});
             });
+        });
 
+        it.should("watch a file for changes in etcd", function (next) {
+            var loader = new Loader({endpoints: ["127.0.0.1:4001"], root: "/gruntit"});
+            assert.deepEqual(loader.loadSync(), helper.sharedEnvConf);
+            loader.watch().on("change", function (conf) {
+                assert.deepEqual(conf, _.deepMerge({}, helper.sharedEnvConf, {test: {b : 2}}));
+                loader.unWatch();
+                next();
+            });
 
         });
-    });
 
+    });
 
 });
 

@@ -2,40 +2,52 @@
 
 # gofigure
 
-Gofigure is a configuration tool for node to help in the gathering and monitoring of configuration files in node. 
+Gofigure is a configuration tool for node to help in the gathering and monitoring of configuration files in node.
 
 # Installation
 
-    npm install gofigure
-    
+For nodejs >= 0.10 and iojs:
+
+```
+$ npm install gofigure
+```
+
+For nodejs < 0.10:
+
+```
+$ npm install gofigure@0.1.2
+```
+
 # Usage
 
-   
-  * [Loading A Configuration](#load)        
-    * [Directories](#loadDir)         
+
+  * [Loading A Configuration](#load)
+    * [Directories](#loadDir)
     * [Files](#loadFiles)
+    * [Etcd](#loadEtcd)
   * [Monitoring Property Changes](#monitoring)
-    * [Monitoring All Files](#monitoringAll)   
-    * [Monitoring Certain Files](#monitoringSome)   
+    * [Monitoring All Files](#monitoringAll)
+    * [Monitoring Certain Files](#monitoringSome)
     * [Property Topic Syntax](#monitoringSyntax)
     * [Property Change Callback](#monitoringCB)
   * [Environments](#environments)
+  * [Node Type](#type)
 
 <a name="load"></a>
 ## Loading configurations
 
-Gofigure currently handles the loading of JSON files for configurations. 
+Gofigure currently handles the loading of JSON files for configurations.
 
 To Get an instance of a configuration object use the `gofigure` method. The `gofigure` method takes an object that accepts the following options
 
-  * [locations](#loadDir)  : an array of directories that contain your configurations.
-  * [files](#loadFiles)  : an array of files that contain your configurations.        
+  * [locations](#loadDir)  : an array of directories or [an Etcd server definition](#loadEtcd) that contain your configurations.
+  * [files](#loadFiles)  : an array of files that contain your configurations.
   * [monitor](#monitoring) : set to true to monitor changes to configuration files.
   * `ignoreMissing` : By default `gofigure` will ignore missing directories. Set this to false to precent the ignoring of missing configuration directories.
   * [environment](#environments) : By default will look for `process.env.NODE_ENV` if this is not set then gofigure will read all properties. If you wish to explicity set the environment then set this property.
   * `defaultEnvironment` [`*`]: The key that represents default values to be set when an environment is used.
 
-```javascript 
+```javascript
 
 var gofigure = require("gofigure");
 
@@ -125,13 +137,62 @@ loader.load(function(err, config){
 
 Again order matters `/prod/configs/config1.json` will override `__dirname + "/config.json"`
 
+<a name="loadEtcd"></a>
+### Etcd
+
+You may also load from a centralized Etcd server.
+
+```javascript
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+
+var loader = gofigure({locations : [ETCD_CONFIG]});
+loader.load(function(err, config){
+    var PORT = config.port, HOST = config.host;
+});
+```
+
+Synchronous loading from Etcd is also supported.
+
+```javascript
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+
+var loader = gofigure({locations : [ETCD_CONFIG]});
+var config = loader.loadSync();
+var PORT = config.port, HOST = config.host;
+```
+
+If your Etcd server requires SSL/TLS and specific certificates, ssloptions can be passed as well.
+
+```javascript
+var gofigure = require("gofigure");
+
+var certs = {
+    ca: [ fs.readFileSync('ca.pem') ],
+    cert: fs.readFileSync('cert.pem'),
+    key: fs.readFileSync('key.pem')
+};
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname", ssloptions: certs};
+
+var loader = gofigure({locations : [ETCD_CONFIG]});
+loader.load(function(err, config){
+    var PORT = config.port, HOST = config.host;
+});
+```
+
+See [below](#etcdconfig) for notes about the supported Etcd layout.
+
 <a name="monitoring"></a>
 ## Monitoring
 
-Gofigure supports the monitoring of changes to configuration files. 
+Gofigure supports the monitoring of changes to configuration files.
 
 <a name="monitoringAll"></a>
-### All files
+### All files or Etcd server
 
 To enable monitoring you can specify monitor to true in the options.
 
@@ -154,11 +215,11 @@ To monitor certain files you can use the files property and with object that hav
 var gofigure = require("gofigure");
 
 var loader = gofigure({files : [
-  { 
-    file : "/prod/configs/config1.json", 
+  {
+    file : "/prod/configs/config1.json",
     monitor : true
-    
-  }, 
+
+  },
   __dirname + "/config.json"
 ]});
 var config = loader.loadSync();
@@ -231,7 +292,7 @@ loading.on("my.cool.{property|otherProperty}", function(propName, newValue){
   //...do something
 });
 
-//listen to the change of property or otherProperty on the my cool or 
+//listen to the change of property or otherProperty on the my cool or
 //notCool object.
 loading.on("my.{cool|notCool}.{property|otherProperty}", function(propName, newValue){
   //...do something
@@ -281,7 +342,7 @@ loading.on("my.cool.property", function(propName, newValue, configObject){
 <a name="environments"></a>
 ##Environments
 
-`gofigure` also supports environments, by default it will look for `NODE_ENV` and if it is set then it will use it. 
+`gofigure` also supports environments, by default it will look for `NODE_ENV` and if it is set then it will use it.
 
 The following is an example configuration file
 
@@ -296,7 +357,7 @@ The following is an example configuration file
 				        {
 					        "type":"RollingFileAppender",
 					        "file":"/var/log/myApp/patio.log"
-				        },								
+				        },
 				        {
 					        "type":"ConsoleAppender"
 				        }
@@ -327,7 +388,7 @@ The following is an example configuration file
           "port" : "80"
         },
         "MYSQL_DB" : "mysql://test:testpass@prod.mydomain.com:3306/prod_db",
-        "MONGO_DB" : "mongodb://test:testpass@prod.mydomain.com:27017/prd_db"        
+        "MONGO_DB" : "mongodb://test:testpass@prod.mydomain.com:27017/prd_db"
     },
     "test": {
         "logging":{
@@ -337,7 +398,7 @@ The following is an example configuration file
 				        {
 					        "type":"RollingFileAppender",
 					        "file":"/var/log/myApp/patio.log"
-				        }												        
+				        }
 			        ]
 		        }
         },
@@ -346,7 +407,7 @@ The following is an example configuration file
           "port" : "80"
         },
         "MYSQL_DB" : "mysql://test:testpass@test.mydomain.com:3306/test_db",
-        "MONGO_DB" : "mongodb://test:testpass@test.mydomain.com:27017/test_db"        
+        "MONGO_DB" : "mongodb://test:testpass@test.mydomain.com:27017/test_db"
     }
 }
 
@@ -448,6 +509,98 @@ You may also share properties across enviroments by using `*` or overriding `def
 
 Now each environment only has to override properties specific to that env.
 
+<a name="type"></a>
+##Node Type
+
+Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default `gofigure` will look for `NODE_TYPE` and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the `environment` to production and `nodetype` to webapp.
+
+```javascript
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+
+var loader = gofigure({
+  locations : [ETCD_CONFIG],
+  environment : "production",
+  nodetype : "webapp"
+});
+```
+
+This can be defined in JSON as:
+
+```json
+{
+    "type": {
+        "production" : {
+            "webapp" : {
+                "host" : "prod.mydomain.com",
+                "port" : "80"
+            }
+        },
+        "development" : {
+            "webapp" : {
+                "host" : "localhost",
+                "port" : "8088"
+            }
+        }
+    }
+}
+```
+
+Please see [Etcd Notes](#etcdconfig) for the supported Etcd layout for `NODE_TYPE`.
+
+<a name="etcdconfig"></a>
+##Etcd Notes
+
+###Environment Layout
+
+The expected layout within Etcd is the following:
+
+127.0.0.1:4001/v2/keys/&lt;root&gt;/&lt;NODE_ENV&gt;
+
+So, in the example above, `gofigure` will look for the following:
+
+```javascript
+process.env.NODE_ENV = "production";
+
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+```
+
+at this location within Etcd for keys:
+
+127.0.0.1:4001/v2/keys/appname/production
+
+###Type Layout
+
+If process.env.NODE_TYPE is set, `gofigure` will look for the following:
+
+127.0.0.1:4001/v2/keys/&lt;root&gt;/type/&lt;NODE_ENV&gt;/&lt;NODE_TYPE&gt;
+
+For the following example:
+
+```javascript
+process.env.NODE_ENV = "production";
+process.env.NODE_TYPE = "webapp";
+
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+```
+
+`gofigure` will look at this location within Etcd for keys:
+
+127.0.0.1:4001/v2/keys/appname/type/production/webapp
+
+
+###Special Environment Names
+
+The following environment names are special and not be used with process.env.NODE_ENV:
+
+* &#42;
+* type
+
 License
 -------
 
@@ -458,7 +611,3 @@ Meta
 
 * Code: `git clone git://github.com/c2fo/gofigure.git`
 * Website:  <http://c2fo.com> - Twitter: <http://twitter.com/c2fo> - 877.465.4045
-
-
-
-

@@ -1,0 +1,318 @@
+[
+  {
+    "scope": "http://127.0.0.1:4001",
+    "method": "GET",
+    "path": "/v2/keys/gruntit?recursive=true",
+    "body": "",
+    "status": 200,
+    "response": {
+      "action": "get",
+      "node": {
+        "key": "/gruntit",
+        "dir": true,
+        "nodes": [
+          {
+            "key": "/gruntit/test",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/test/b",
+                "value": "4",
+                "modifiedIndex": 22,
+                "createdIndex": 22
+              }
+            ],
+            "modifiedIndex": 7,
+            "createdIndex": 7
+          },
+          {
+            "key": "/gruntit/production",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/production/c",
+                "value": "4",
+                "modifiedIndex": 8,
+                "createdIndex": 8
+              }
+            ],
+            "modifiedIndex": 8,
+            "createdIndex": 8
+          },
+          {
+            "key": "/gruntit/*",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/*/a",
+                "value": "1",
+                "modifiedIndex": 3,
+                "createdIndex": 3
+              },
+              {
+                "key": "/gruntit/*/b",
+                "value": "2",
+                "modifiedIndex": 4,
+                "createdIndex": 4
+              }
+            ],
+            "modifiedIndex": 3,
+            "createdIndex": 3
+          },
+          {
+            "key": "/gruntit/development",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/development/c",
+                "value": "4",
+                "modifiedIndex": 6,
+                "createdIndex": 6
+              },
+              {
+                "key": "/gruntit/development/b",
+                "value": "3",
+                "modifiedIndex": 5,
+                "createdIndex": 5
+              }
+            ],
+            "modifiedIndex": 5,
+            "createdIndex": 5
+          }
+        ],
+        "modifiedIndex": 3,
+        "createdIndex": 3
+      }
+    },
+    "headers": {
+      "content-type": "application/json",
+      "x-etcd-cluster-id": "7e27652122e8b2ae",
+      "x-etcd-index": "22",
+      "x-raft-index": "3733",
+      "x-raft-term": "2",
+      "date": "Mon, 16 Mar 2015 18:18:24 GMT",
+      "content-length": "883"
+    }
+  },
+  {
+    "scope": "http://127.0.0.1:4001",
+    "method": "GET",
+    "path": "/v2/keys/gruntit?recursive=true",
+    "body": "",
+    "status": 200,
+    "response": {
+      "action": "get",
+      "node": {
+        "key": "/gruntit",
+        "dir": true,
+        "nodes": [
+          {
+            "key": "/gruntit/development",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/development/b",
+                "value": "3",
+                "modifiedIndex": 5,
+                "createdIndex": 5
+              },
+              {
+                "key": "/gruntit/development/c",
+                "value": "4",
+                "modifiedIndex": 6,
+                "createdIndex": 6
+              }
+            ],
+            "modifiedIndex": 5,
+            "createdIndex": 5
+          },
+          {
+            "key": "/gruntit/test",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/test/b",
+                "value": "4",
+                "modifiedIndex": 22,
+                "createdIndex": 22
+              }
+            ],
+            "modifiedIndex": 7,
+            "createdIndex": 7
+          },
+          {
+            "key": "/gruntit/production",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/production/c",
+                "value": "4",
+                "modifiedIndex": 8,
+                "createdIndex": 8
+              }
+            ],
+            "modifiedIndex": 8,
+            "createdIndex": 8
+          },
+          {
+            "key": "/gruntit/*",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/*/a",
+                "value": "1",
+                "modifiedIndex": 3,
+                "createdIndex": 3
+              },
+              {
+                "key": "/gruntit/*/b",
+                "value": "2",
+                "modifiedIndex": 4,
+                "createdIndex": 4
+              }
+            ],
+            "modifiedIndex": 3,
+            "createdIndex": 3
+          }
+        ],
+        "modifiedIndex": 3,
+        "createdIndex": 3
+      }
+    },
+    "headers": {
+      "content-type": "application/json",
+      "x-etcd-cluster-id": "7e27652122e8b2ae",
+      "x-etcd-index": "22",
+      "x-raft-index": "3733",
+      "x-raft-term": "2",
+      "date": "Mon, 16 Mar 2015 18:18:24 GMT",
+      "content-length": "883"
+    }
+  },
+  {
+    "scope": "http://127.0.0.1:4001",
+    "method": "GET",
+    "path": "/v2/keys/gruntit?recursive=true",
+    "body": "",
+    "status": 200,
+    "response": {
+      "action": "get",
+      "node": {
+        "key": "/gruntit",
+        "dir": true,
+        "nodes": [
+          {
+            "key": "/gruntit/*",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/*/a",
+                "value": "1",
+                "modifiedIndex": 3,
+                "createdIndex": 3
+              },
+              {
+                "key": "/gruntit/*/b",
+                "value": "2",
+                "modifiedIndex": 4,
+                "createdIndex": 4
+              }
+            ],
+            "modifiedIndex": 3,
+            "createdIndex": 3
+          },
+          {
+            "key": "/gruntit/development",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/development/b",
+                "value": "3",
+                "modifiedIndex": 5,
+                "createdIndex": 5
+              },
+              {
+                "key": "/gruntit/development/c",
+                "value": "4",
+                "modifiedIndex": 6,
+                "createdIndex": 6
+              }
+            ],
+            "modifiedIndex": 5,
+            "createdIndex": 5
+          },
+          {
+            "key": "/gruntit/test",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/test/b",
+                "value": "4",
+                "modifiedIndex": 22,
+                "createdIndex": 22
+              }
+            ],
+            "modifiedIndex": 7,
+            "createdIndex": 7
+          },
+          {
+            "key": "/gruntit/production",
+            "dir": true,
+            "nodes": [
+              {
+                "key": "/gruntit/production/c",
+                "value": "4",
+                "modifiedIndex": 8,
+                "createdIndex": 8
+              }
+            ],
+            "modifiedIndex": 8,
+            "createdIndex": 8
+          }
+        ],
+        "modifiedIndex": 3,
+        "createdIndex": 3
+      }
+    },
+    "headers": {
+      "content-type": "application/json",
+      "x-etcd-cluster-id": "7e27652122e8b2ae",
+      "x-etcd-index": "22",
+      "x-raft-index": "3743",
+      "x-raft-term": "2",
+      "date": "Mon, 16 Mar 2015 18:18:29 GMT",
+      "content-length": "883"
+    }
+  },
+  {
+    "scope": "http://127.0.0.1:4001",
+    "method": "GET",
+    "path": "/v2/keys/gruntit?recursive=true&wait=true",
+    "body": "",
+    "status": 200,
+    "response": {
+      "action": "set",
+      "node": {
+        "key": "/gruntit/test/b",
+        "value": "2",
+        "modifiedIndex": 23,
+        "createdIndex": 23
+      },
+      "prevNode": {
+        "key": "/gruntit/test/b",
+        "value": "4",
+        "modifiedIndex": 22,
+        "createdIndex": 22
+      }
+    },
+    "headers": {
+      "content-type": "application/json",
+      "x-etcd-cluster-id": "7e27652122e8b2ae",
+      "x-etcd-index": "22",
+      "x-raft-index": "3743",
+      "x-raft-term": "2",
+      "date": "Mon, 16 Mar 2015 18:18:29 GMT",
+      "transfer-encoding": "chunked"
+    }
+  }
+]
