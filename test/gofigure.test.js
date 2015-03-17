@@ -8,7 +8,11 @@ var it = require("it"),
     conf1 = helper.conf1,
     conf2 = helper.conf2,
     envConf = helper.envConf,
-    sharedEnvConf = helper.sharedEnvConf;
+    sharedEnvConf = helper.sharedEnvConf,
+    path = require("path"),
+    nock = require("nock");
+
+nock.load(path.resolve(__dirname, "config-etcd/gofigure_queries.json"));
 
 it.describe("gofigure",function (it) {
 
@@ -25,6 +29,23 @@ it.describe("gofigure",function (it) {
         it.should("load configuration from directories", function (next) {
             var config1 = goFigure({locations: [__dirname + "/configs/configs1"]});
             var config2 = goFigure({locations: [__dirname + "/configs/configs2"]});
+            config1.load(
+                function (err, res) {
+                    assert.deepEqual(res, conf1);
+                }).then(function () {
+                    config2.load(
+                        function (err, res) {
+                            if (!err) {
+                                assert.deepEqual(res, conf2);
+                                next(null);
+                            }
+                        }).addErrback(next);
+                }, next);
+        });
+
+        it.should("load configuration from etcd", function (next) {
+            var config1 = goFigure({locations: [{endpoints: ["127.0.0.1:4001"], root: "/configs1"}]});
+            var config2 = goFigure({locations: [{endpoints: ["127.0.0.1:4001"], root: "/configs2"}]});
             config1.load(
                 function (err, res) {
                     assert.deepEqual(res, conf1);
@@ -59,6 +80,32 @@ it.describe("gofigure",function (it) {
                 var configDev = goFigure({environment: "development", locations: [__dirname + "/configs/config-env"]});
                 var configProd = goFigure({environment: "production", locations: [__dirname + "/configs/config-env"]});
                 var configTest = goFigure({environment: "test", locations: [__dirname + "/configs/config-env"]});
+                configDev.load(
+                    function (err, res) {
+                        assert.deepEqual(res, envConf.development);
+                    }).then(function () {
+                        configProd.load(
+                            function (err, res) {
+                                if (!err) {
+                                    assert.deepEqual(res, envConf.production);
+                                    next(null);
+                                }
+                            }).then(function () {
+                                configTest.load(
+                                    function (err, res) {
+                                        if (!err) {
+                                            assert.deepEqual(res, envConf.test);
+                                            next(null);
+                                        }
+                                    }).addErrback(next);
+                            }, next);
+                    }, next);
+            });
+
+            it.should("from etcd", function (next) {
+                var configDev = goFigure({environment: "development", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-env"}]});
+                var configProd = goFigure({environment: "production", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-env"}]});
+                var configTest = goFigure({environment: "test", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-env"}]});
                 configDev.load(
                     function (err, res) {
                         assert.deepEqual(res, envConf.development);
@@ -117,7 +164,14 @@ it.describe("gofigure",function (it) {
             assert.deepEqual(config2.loadSync(), conf2);
         });
 
-        it.should("load configuration from certain directories", function () {
+        it.should("load configuration from etcd", function () {
+            var config1 = goFigure({locations: [{endpoints: ["127.0.0.1:4001"], root: "/configs1"}]});
+            var config2 = goFigure({locations: [{endpoints: ["127.0.0.1:4001"], root: "/configs2"}]});
+            assert.deepEqual(config1.loadSync(), conf1);
+            assert.deepEqual(config2.loadSync(), conf2);
+        });
+
+        it.should("load configuration from certain files", function () {
             var config1 = goFigure({files: [__dirname + "/configs/configs1/config1.json"]});
             var config2 = goFigure({files: [__dirname + "/configs/configs2/config2.json"]});
             assert.deepEqual(config1.loadSync(), conf1);
@@ -157,6 +211,15 @@ it.describe("gofigure",function (it) {
                 assert.deepEqual(configTest.loadSync(), envConf.test);
             });
 
+            it.should("from etcd", function () {
+                var configDev = goFigure({environment: "development", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-env"}]});
+                var configProd = goFigure({environment: "production", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-env"}]});
+                var configTest = goFigure({environment: "test", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-env"}]});
+                assert.deepEqual(configDev.loadSync(), envConf.development);
+                assert.deepEqual(configProd.loadSync(), envConf.production);
+                assert.deepEqual(configTest.loadSync(), envConf.test);
+            });
+
             it.should("from files", function () {
                 var configDev = goFigure({environment: "development", files: [__dirname + "/configs/config-env/config.json"]});
                 var configProd = goFigure({environment: "production", files: [__dirname + "/configs/config-env/config.json"]});
@@ -172,6 +235,15 @@ it.describe("gofigure",function (it) {
                 var configDev = goFigure({environment: "development", locations: [__dirname + "/configs/config-shared-env"]});
                 var configProd = goFigure({environment: "production", locations: [__dirname + "/configs/config-shared-env"]});
                 var configTest = goFigure({environment: "test", locations: [__dirname + "/configs/config-shared-env"]});
+                assert.deepEqual(configDev.loadSync(), _.merge({}, sharedEnvConf["*"], sharedEnvConf.development));
+                assert.deepEqual(configProd.loadSync(), _.merge({}, sharedEnvConf["*"], sharedEnvConf.production));
+                assert.deepEqual(configTest.loadSync(), _.merge({}, sharedEnvConf["*"], sharedEnvConf.test));
+            });
+
+            it.should("from etcd", function () {
+                var configDev = goFigure({environment: "development", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-shared-env"}]});
+                var configProd = goFigure({environment: "production", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-shared-env"}]});
+                var configTest = goFigure({environment: "test", locations: [{endpoints: ["127.0.0.1:4001"], root: "/config-shared-env"}]});
                 assert.deepEqual(configDev.loadSync(), _.merge({}, sharedEnvConf["*"], sharedEnvConf.development));
                 assert.deepEqual(configProd.loadSync(), _.merge({}, sharedEnvConf["*"], sharedEnvConf.production));
                 assert.deepEqual(configTest.loadSync(), _.merge({}, sharedEnvConf["*"], sharedEnvConf.test));
@@ -244,6 +316,33 @@ it.describe("gofigure",function (it) {
             })(0);
 
 
+        });
+
+        it.should("monitor configurations in etcd", function (next) {
+            var config1 = goFigure({monitor: true, locations: [{endpoints: ["127.0.0.1:4001"], root: "/configs1"}]});
+            config1.loadSync();
+            var res = [], called = 0;
+            var assertCheck = function(){
+                config1.stop();
+                assert.deepEqual(res, [
+                    {key: "a", val: 4},
+                    {key: "b.c", val: 5},
+                    {key: "b.d", val: 7},
+                    {key: "e.g.h", val: 9},
+                    {key: "e.g", val: {h: 9}},
+                    {key: "e", val: {f: 3, g: {h: 9}}}
+                ]);
+                next();
+            };
+            ["a", "b.{c|d}", "e", "e.g", "e.g.*"].forEach(function (topic) {
+                config1.on(topic, function (key, val) {
+                    called++;
+                    res.push({key: key, val: _.isObject(val) ? _.deepMerge({}, val) : val});
+                    if(called === 6){
+                        assertCheck();
+                    }
+                });
+            });
         });
 
         it.should("monitor configurations of files", function (next) {
@@ -506,6 +605,33 @@ it.describe("gofigure",function (it) {
             })(0);
 
 
+        });
+
+        it.should("monitor configurations in etcd", function (next) {
+            var config1 = goFigure({monitor: true, locations: [{endpoints: ["127.0.0.1:4001"], root: "/configs1"}]});
+            config1.loadSync();
+            var res = [], called = 0;
+            var assertCheck = function(){
+                config1.stop();
+                assert.deepEqual(res, [
+                    {key: "a", val: 4},
+                    {key: "b.c", val: 5},
+                    {key: "b.d", val: 7},
+                    {key: "e.g.h", val: 9},
+                    {key: "e.g", val: {h: 9}},
+                    {key: "e", val: {f: 3, g: {h: 9}}}
+                ]);
+                next();
+            };
+            ["a", "b.{c|d}", "e", "e.g", "e.g.*"].forEach(function (topic) {
+                config1.addListener(topic, function (key, val, config) {
+                    called++;
+                    res.push({key: key, val: _.isObject(val) ? _.deepMerge({}, val) : val});
+                    if(called === 6){
+                        assertCheck();
+                    }
+                });
+            });
         });
 
         it.should("monitor configurations of files", function (next) {

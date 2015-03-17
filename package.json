@@ -11,7 +11,9 @@
         "Configurations",
         "JSON",
         "Properties",
-        "Property"
+        "Property",
+        "etcd",
+        "raft"
     ],
     "homepage": "http://c2fo.github.com/gofigure",
     "repository": {
@@ -36,12 +38,16 @@
         "grunt-contrib-jshint": "~0.2.0",
         "nock": "1.1.x"
     },
-    "author": "Doug Martin (doug.martin@pollenware.com)",
+    "author": "Doug Martin (doug.martin@c2fo.com)",
     "main": "index.js",
     "directories": {
         "lib": "lib"
     },
     "engines": {
         "node": ">= 0.10.0"
-    }
+    },
+    "contributors": [{
+        "name": "Bryan Rockwood",
+        "email": "bryan.rockwood@c2fo.com"
+    }]
 }
