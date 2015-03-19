@@ -5,8 +5,7 @@ var it = require("it"),
     path = require("path"),
     helper = require("./helper"),
     Loader = require("../index").Loader,
-    nock = require("nock"),
-    fs = require("fs");
+    nock = require("nock");
 
 nock.load(path.resolve(__dirname, "config-etcd/queries.json"));
 
@@ -115,7 +114,7 @@ it.describe("gofigure.Loader", function (it) {
             });
             setTimeout(function () {
                 helper.updateConfig("conf1", {a: 2});
-            });
+            },10);
         });
 
         it.should("watch a file for changes in a directory", function (next) {
@@ -129,7 +128,7 @@ it.describe("gofigure.Loader", function (it) {
             });
             setTimeout(function () {
                 helper.updateConfig("conf1", {a: 2});
-            });
+            },10);
         });
 
         it.should("watch a file for changes in etcd", function (next) {
@@ -146,4 +145,3 @@ it.describe("gofigure.Loader", function (it) {
     });
 
 });
-

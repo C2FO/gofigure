@@ -184,8 +184,6 @@ loader.load(function(err, config){
 });
 ```
 
-See [below](#etcdconfig) for notes about the supported Etcd layout.
-
 <a name="monitoring"></a>
 ## Monitoring
 
@@ -342,6 +340,15 @@ loading.on("my.cool.property", function(propName, newValue, configObject){
 <a name="environments"></a>
 ##Environments
 
+**Reserved Property Names**
+
+The following environment names are reserved and not be used when process.env.NODE_ENV or `environment` is set.
+
+* `*`
+* `type`
+
+### NODE_ENV
+
 `gofigure` also supports environments, by default it will look for `NODE_ENV` and if it is set then it will use it.
 
 The following is an example configuration file
@@ -447,7 +454,7 @@ var loader = gofigure({
 
 ```
 
-You may also share properties across enviroments by using `*` or overriding `defaultEnvironment` when initializing.
+You may also share properties across environments by using `*` or overriding `defaultEnvironment` when initializing.
 
 ```json
 
@@ -509,54 +516,12 @@ You may also share properties across enviroments by using `*` or overriding `def
 
 Now each environment only has to override properties specific to that env.
 
-<a name="type"></a>
-##Node Type
-
-Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default `gofigure` will look for `NODE_TYPE` and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the `environment` to production and `nodetype` to webapp.
-
-```javascript
-var gofigure = require("gofigure");
-
-var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
-
-var loader = gofigure({
-  locations : [ETCD_CONFIG],
-  environment : "production",
-  nodetype : "webapp"
-});
-```
-
-This can be defined in JSON as:
-
-```json
-{
-    "type": {
-        "production" : {
-            "webapp" : {
-                "host" : "prod.mydomain.com",
-                "port" : "80"
-            }
-        },
-        "development" : {
-            "webapp" : {
-                "host" : "localhost",
-                "port" : "8088"
-            }
-        }
-    }
-}
-```
-
-Please see [Etcd Notes](#etcdconfig) for the supported Etcd layout for `NODE_TYPE`.
-
-<a name="etcdconfig"></a>
-##Etcd Notes
-
-###Environment Layout
+### Using NODE_ENV with Etcd
 
 The expected layout within Etcd is the following:
 
-127.0.0.1:4001/v2/keys/&lt;root&gt;/&lt;NODE_ENV&gt;
+
+`127.0.0.1:4001/v2/keys/<root>/<NODE_ENV>`
 
 So, in the example above, `gofigure` will look for the following:
 
@@ -572,34 +537,137 @@ at this location within Etcd for keys:
 
 127.0.0.1:4001/v2/keys/appname/production
 
-###Type Layout
+<a name="type"></a>
+##NODE_TYPE
 
-If process.env.NODE_TYPE is set, `gofigure` will look for the following:
+**NOTE** This is to used with [`NODE_ENV`](#environments).
 
-127.0.0.1:4001/v2/keys/&lt;root&gt;/type/&lt;NODE_ENV&gt;/&lt;NODE_TYPE&gt;
+Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default `gofigure` will look for `NODE_TYPE` and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the `environment` to production and `nodetype` to webapp.
+
+```javascript
+var gofigure = require("gofigure");
+
+var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
+
+var loader = gofigure({
+  locations : [ETCD_CONFIG],
+  environment : "production",
+  nodetype : "webapp"
+});
+```
+
+**Type Layout**
+
+When using `NODE_TYPE` you will need to use the `type` property in your json, and Etcd. If process.env.NODE_TYPE is set, `gofigure` will look for the following:
+
+
+In JSON
+
+```
+{
+    "production": {},
+    "development": {},
+    "type":{
+        "production": {},
+        "development": {},
+    }
+}
+```
+
+**Example**
 
 For the following example:
 
 ```javascript
 process.env.NODE_ENV = "production";
 process.env.NODE_TYPE = "webapp";
+```
 
+This can be defined through configuration files JSON by doing the following:
+
+production.json
+
+```json
+{
+    "production": {
+        "host" : "prod.mydomain.com",
+        "port" : "80"
+    }
+}
+```
+
+development.json
+
+```json
+{
+    "development": {
+        "host" : "dev.mydomain.com",
+        "port" : "8080"
+    }
+}
+```
+
+```json
+{
+    "type": {
+        "production" : {
+            "webapp" : {
+                "host" : "prod-special.mydomain.com",
+            }
+        },
+        "development" : {
+            "webapp" : {
+                "port" : "6060"
+            }
+        }
+    }
+}
+```
+
+Which would generate the following configuration object.
+
+Assume the following env `NODE_ENV=production NODE_TYPE=webapp`
+
+```json
+{
+    "host" : "prod-special.mydomain.com",
+    "port" : "80"
+}
+```
+
+If you changed `NODE_ENV=development NODE_TYPE=webapp`
+
+```json
+{
+    "host" : "dev.mydomain.com",
+    "port" : "6060"
+}
+```
+
+### Using NODE_TYPE with Etcd
+
+When using `NODE_TYPE` with Etcd your URI would look like the following
+
+```
+127.0.0.1:4001/v2/keys/<root>/type/<NODE_ENV>/<NODE_TYPE>
+```
+
+To load Etcd with a `NODE_TYPE` your code could look like the following.
+
+Assume the following env `NODE_ENV=production NODE_TYPE=webapp`
+```javascript
 var gofigure = require("gofigure");
 
 var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
 ```
 
-`gofigure` will look at this location within Etcd for keys:
+`gofigure` would generate the following URI to retrieve the type config from Etcd.
 
+**NOTE** gofigure would also load the `NODE_ENV` uri discussed above.
+
+```
 127.0.0.1:4001/v2/keys/appname/type/production/webapp
-
-
-###Special Environment Names
-
-The following environment names are special and not be used with process.env.NODE_ENV:
-
-* &#42;
-* type
+```
 
 License
 -------

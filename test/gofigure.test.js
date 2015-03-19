@@ -946,7 +946,7 @@ it.describe("gofigure",function (it) {
         });
 
     });
-}).as(module);
+});
 
 
 
