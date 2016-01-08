@@ -178,14 +178,14 @@
 
 
   <p><a href="https://travis-ci.org/C2FO/gofigure"><img src="https://travis-ci.org/C2FO/gofigure.png" alt="Build Status"></a></p>
-<h1>gofigure</h1>
+<h1 id="gofigure">gofigure</h1>
 <p>Gofigure is a configuration tool for node to help in the gathering and monitoring of configuration files in node.</p>
-<h1>Installation</h1>
+<h1 id="installation">Installation</h1>
 <p>For nodejs &gt;= 0.10 and iojs:</p>
 <pre class='prettyprint linenums lang-js'><code>$ npm install gofigure</code></pre>
 <p>For nodejs &lt; 0.10:</p>
 <pre class='prettyprint linenums lang-js'><code>$ npm install gofigure@0.1.2</code></pre>
-<h1>Usage</h1>
+<h1 id="usage">Usage</h1>
 <ul>
 <li><a href="#load">Loading A Configuration</a><ul>
 <li><a href="#loadDir">Directories</a></li>
@@ -204,7 +204,7 @@
 <li><a href="#type">Node Type</a></li>
 </ul>
 <p><a name="load"></a></p>
-<h2>Loading configurations</h2>
+<h2 id="loading-configurations">Loading configurations</h2>
 <p>Gofigure currently handles the loading of JSON files for configurations.</p>
 <p>To Get an instance of a configuration object use the <code>gofigure</code> method. The <code>gofigure</code> method takes an object that accepts the following options</p>
 <ul>
@@ -238,7 +238,7 @@ var dirLoader = gofigure({
 var loader = gofigure({locations : [__dirname + &quot;/configs&quot;]});
 var config = loader.loadSync();</code></pre>
 <p><a name="loadDir"></a></p>
-<h3>Directories of configurations</h3>
+<h3 id="directories-of-configurations">Directories of configurations</h3>
 <p>To load directories that contain configuration files in the options object provide locations property that is an array of directories than contain your configurations.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
 var gofigure = require(&quot;gofigure&quot;);
@@ -264,7 +264,7 @@ loader.load(function(err, config){
     var PORT = config.port, HOST = config.host;
 });</code></pre>
 <p><a name="loadFiles"></a></p>
-<h3>Files</h3>
+<h3 id="files">Files</h3>
 <p>You may also load specific files rather than entire directories.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
@@ -274,7 +274,7 @@ loader.load(function(err, config){
 });</code></pre>
 <p>Again order matters <code>/prod/configs/config1.json</code> will override <code>__dirname + &quot;/config.json&quot;</code></p>
 <p><a name="loadEtcd"></a></p>
-<h3>Etcd</h3>
+<h3 id="etcd">Etcd</h3>
 <p>You may also load from a centralized Etcd server.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
@@ -308,10 +308,10 @@ loader.load(function(err, config){
     var PORT = config.port, HOST = config.host;
 });</code></pre>
 <p><a name="monitoring"></a></p>
-<h2>Monitoring</h2>
+<h2 id="monitoring">Monitoring</h2>
 <p>Gofigure supports the monitoring of changes to configuration files.</p>
 <p><a name="monitoringAll"></a></p>
-<h3>All files or Etcd server</h3>
+<h3 id="all-files-or-etcd-server">All files or Etcd server</h3>
 <p>To enable monitoring you can specify monitor to true in the options.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
@@ -322,7 +322,7 @@ loading.on(&quot;my.cool.property&quot;, function(newValue){
   //...do something
 });</code></pre>
 <p><a name="monitoringSome"></a></p>
-<h3>Individual Files</h3>
+<h3 id="individual-files">Individual Files</h3>
 <p>To monitor certain files you can use the files property and with object that have a <code>monitor : true</code> KV pair.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
@@ -341,7 +341,7 @@ loading.on(&quot;my.cool.property&quot;, function(newValue){
 });</code></pre>
 <p>Just <code>config1.json</code> will be monitored for changes.</p>
 <p><a name="monitoringSyntax"></a></p>
-<h3>Property topic syntax</h3>
+<h3 id="property-topic-syntax">Property topic syntax</h3>
 <p>To listen to all properties</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">loading.on(function(config){
   //...do something
@@ -397,7 +397,7 @@ loading.on(&quot;my.{cool|notCool}.{property|otherProperty}&quot;, function(prop
   //...do something
 });</code></pre>
 <p><a name="monitoringCB"></a></p>
-<h3>Callback Arguments</h3>
+<h3 id="callback-arguments">Callback Arguments</h3>
 <p>The property change callback will pass in the following values depending on the arity of the callback.</p>
 <p>If 1 argument is expected then just the callback invoked with the new value is a.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
@@ -415,14 +415,14 @@ loading.on(&quot;my.cool.property&quot;, function(propName, newValue, configObje
   //...do something
 });</code></pre>
 <p><a name="environments"></a></p>
-<h2>Environments</h2>
+<h2 id="environments">Environments</h2>
 <p><strong>Reserved Property Names</strong></p>
 <p>The following environment names are reserved and not be used when process.env.NODE_ENV or <code>environment</code> is set.</p>
 <ul>
 <li><code>*</code></li>
 <li><code>type</code></li>
 </ul>
-<h3>NODE_ENV</h3>
+<h3 id="node_env">NODE_ENV</h3>
 <p><code>gofigure</code> also supports environments, by default it will look for <code>NODE_ENV</code> and if it is set then it will use it.</p>
 <p>The following is an example configuration file</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">
@@ -573,7 +573,7 @@ var loader = gofigure({
     }
 }</code></pre>
 <p>Now each environment only has to override properties specific to that env.</p>
-<h3>Using NODE_ENV with Etcd</h3>
+<h3 id="using-node_env-with-etcd">Using NODE_ENV with Etcd</h3>
 <p>The expected layout within Etcd is the following:</p>
 <p><code>127.0.0.1:4001/v2/keys/&lt;root&gt;/&lt;NODE_ENV&gt;</code></p>
 <p>So, in the example above, <code>gofigure</code> will look for the following:</p>
@@ -585,7 +585,7 @@ var ETCD_CONFIG = {endpoints: [&quot;127.0.0.1:4001&quot;], root: &quot;/appname
 <p>at this location within Etcd for keys:</p>
 <p>127.0.0.1:4001/v2/keys/appname/production</p>
 <p><a name="type"></a></p>
-<h2>NODE_TYPE</h2>
+<h2 id="node_type">NODE_TYPE</h2>
 <p><strong>NOTE</strong> This is to used with <a href="#environments"><code>NODE_ENV</code></a>.</p>
 <p>Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default <code>gofigure</code> will look for <code>NODE_TYPE</code> and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the <code>environment</code> to production and <code>nodetype</code> to webapp.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
@@ -652,7 +652,7 @@ process.env.NODE_TYPE = &quot;webapp&quot;;</code></pre>
     &quot;host&quot; : &quot;dev.mydomain.com&quot;,
     &quot;port&quot; : &quot;6060&quot;
 }</code></pre>
-<h3>Using NODE_TYPE with Etcd</h3>
+<h3 id="using-node_type-with-etcd">Using NODE_TYPE with Etcd</h3>
 <p>When using <code>NODE_TYPE</code> with Etcd your URI would look like the following</p>
 <pre class='prettyprint linenums lang-js'><code>127.0.0.1:4001/v2/keys/&lt;root&gt;/type/&lt;NODE_ENV&gt;/&lt;NODE_TYPE&gt;</code></pre>
 <p>To load Etcd with a <code>NODE_TYPE</code> your code could look like the following.</p>
@@ -663,9 +663,9 @@ var ETCD_CONFIG = {endpoints: [&quot;127.0.0.1:4001&quot;], root: &quot;/appname
 <p><code>gofigure</code> would generate the following URI to retrieve the type config from Etcd.</p>
 <p><strong>NOTE</strong> gofigure would also load the <code>NODE_ENV</code> uri discussed above.</p>
 <pre class='prettyprint linenums lang-js'><code>127.0.0.1:4001/v2/keys/appname/type/production/webapp</code></pre>
-<h2>License</h2>
+<h2 id="license">License</h2>
 <p>MIT <a href="https://github.com/C2FO/gofigure/raw/master/LICENSE">https://github.com/C2FO/gofigure/raw/master/LICENSE</a></p>
-<h2>Meta</h2>
+<h2 id="meta">Meta</h2>
 <ul>
 <li>Code: <code>git clone git://github.com/c2fo/gofigure.git</code></li>
 <li>Website:  <a href="http://c2fo.com">http://c2fo.com</a> - Twitter: <a href="http://twitter.com/c2fo">http://twitter.com/c2fo</a> - 877.465.4045</li>
