@@ -1,0 +1,7 @@
+{
+    "*": {
+        "configValueOne": 1,
+        "configValueTwo": 2,
+        "envType": "default"
+    }
+}

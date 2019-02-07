@@ -1,3 +1,7 @@
+# v1.0.0
+
+* Add env variable support
+
 # v0.2.1
 
 * Changing the etcd package dependency version.

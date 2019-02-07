@@ -30,6 +30,7 @@ $ npm install gofigure@0.1.2
     * [Monitoring Certain Files](#monitoringSome)
     * [Property Topic Syntax](#monitoringSyntax)
     * [Property Change Callback](#monitoringCB)
+  * [Environment Variables](#environmentVariables)
   * [Environments](#environments)
   * [Node Type](#type)
 
@@ -337,6 +338,63 @@ loading.on("my.cool.property", function(propName, newValue, configObject){
 
 ```
 
+<a name="environmentVariables"></a>
+## Environment Variables
+
+`gofigure` supports the replacement of environment variables in the configurations usings the following syntax.
+
+* `${ENV_VARIABLE_NAME}` - Sets the value to `process.env.ENV_VARIABLE_NAME` or `''` if it is unset
+* `${ENV_VARIABLE_NAME:-default}` - Evaluates to the default value if the `ENV_VARIABLE_NAME` is unset or empty
+* `${ENV_VARIABLE_NAME-default}` - Evaluates to the default value if the `ENV_VARIABLE_NAME` is unset
+* `${ENV_VARIABLE_NAME:?err}` - Throws an error with the message if `ENV_VARIABLE_NAME` is unset or empty
+* `${ENV_VARIABLE_NAME?err}` - Throws an error with the message if `ENV_VARIABLE_NAME` is unset
+
+You can use `$$` if you want to ignore a substitution `$${SOME_VALUE}`.
+
+### Example
+
+Given the following config
+
+```json
+{
+    "a": "${ENV_VAR_A}",
+    "b" : {
+        "c": "${ENV_VAR_B:-b.c}" 
+    },
+    "arr": ["${ARR_INDEX_0}", "${ARR_INDEX_1}"],
+    "arrWithObjects": [
+        { "value": "${ARR_INDEX_0}" },
+        { "value": "${ARR_INDEX_1}" }
+    ]
+}
+``` 
+
+And the following environemnt
+
+```sh
+ENV_VAR_A=a
+ENV_VAR_B=
+ARR_INDEX_0=zero
+ARR_INDEX_1=one
+```
+
+Would produce 
+
+```json
+{
+    "a": "a",
+    "b" : {
+        "c": "b.c" 
+    },
+    "arr": ["zero", "one"],
+    "arrWithObjects": [
+        { "value": "zero" },
+        { "value": "one" }
+    ]
+}
+``` 
+
+
 <a name="environments"></a>
 ##Environments
 
@@ -542,7 +600,7 @@ at this location within Etcd for keys:
 
 **NOTE** This is to used with [`NODE_ENV`](#environments).
 
-Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default `gofigure` will look for `NODE_TYPE` and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the `environment` to production and `nodetype` to webapp.
+Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default `gofigure` will look for `NODE_TYPE` and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the `environment` to production and `nodeType` to webapp.
 
 ```javascript
 var gofigure = require("gofigure");
@@ -552,7 +610,7 @@ var ETCD_CONFIG = {endpoints: ["127.0.0.1:4001"], root: "/appname"};
 var loader = gofigure({
   locations : [ETCD_CONFIG],
   environment : "production",
-  nodetype : "webapp"
+  nodeType : "webapp"
 });
 ```
 

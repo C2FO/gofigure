@@ -1,1 +1,3 @@
-module.exports = exports = require("./lib/index.js");
+'use strict';
+
+module.exports = require('./lib');
