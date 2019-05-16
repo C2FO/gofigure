@@ -1,54 +1,60 @@
 {
-    "name": "gofigure",
-    "description": "Configuration helper for node",
-    "version": "0.2.1",
-    "scripts": {
-        "test": "grunt jshint it"
-    },
-    "keywords": [
-        "Config",
-        "Configuration",
-        "Configurations",
-        "JSON",
-        "Properties",
-        "Property",
-        "etcd",
-        "raft"
-    ],
-    "homepage": "http://c2fo.github.com/gofigure",
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:C2FO/gofigure.git"
-    },
-    "dependencies": {
-        "function-extended": "0.0.9",
-        "is-extended": "0.0.10",
-        "array-extended": "0.0.11",
-        "promise-extended": "0.0.9",
-        "extended": "0.0.6",
-        "object-extended": "0.0.7",
-        "declare.js": "0.0.8",
-        "glob": "~3.1.21",
-        "node-etcd": "~4.2.1"
-    },
-    "devDependencies": {
-        "it": "~0.2.6",
-        "grunt-it": "~0.3.1",
-        "grunt": "~0.4.1",
-        "grunt-contrib-jshint": "~0.10.0",
-        "grunt-exec": "^0.4.5",
-        "nock": "1.1.x"
-    },
-    "author": "Doug Martin (doug.martin@c2fo.com)",
-    "main": "index.js",
-    "directories": {
-        "lib": "lib"
-    },
-    "engines": {
-        "node": ">= 0.10.0"
-    },
-    "contributors": [{
-        "name": "Bryan Rockwood",
-        "email": "bryan.rockwood@c2fo.com"
-    }]
+  "name": "gofigure",
+  "description": "Configuration library for node",
+  "version": "1.0.0",
+  "scripts": {
+    "mocha": "mocha test/ --recursive",
+    "test": "npm run eslint && npm run mocha",
+    "eslint": "eslint lib/. test/.",
+    "eslint-fix": "eslint lib/. test/. --fix",
+    "docs": "npm run remove-docs && npm run create-docs",
+    "remove-docs": "rm -rf docs/*",
+    "create-docs": "coddoc -f multi-html -d ./lib --dir ./docs"
+  },
+  "keywords": [
+    "Config",
+    "Configuration",
+    "Configurations",
+    "JSON",
+    "Properties",
+    "Property",
+    "Environment Variables",
+    "etcd",
+    "raft"
+  ],
+  "homepage": "http://c2fo.github.com/gofigure",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:C2FO/gofigure.git"
+  },
+  "dependencies": {
+    "glob": "~3.1.21",
+    "lodash": "3.10.1",
+    "node-etcd": "~4.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "coddoc": "0.0.3",
+    "eslint": "4.19.1",
+    "eslint-config-airbnb-base": "13.0.0",
+    "eslint-plugin-import": "2.13.0",
+    "mocha": "^5.2.0",
+    "nock": "1.1.x"
+  },
+  "author": "Doug Martin (doug.martin@c2fo.com)",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "contributors": [
+    {
+      "name": "Bryan Rockwood",
+      "email": "bryan.rockwood@c2fo.com"
+    }
+  ]
 }

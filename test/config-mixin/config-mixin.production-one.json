@@ -1,0 +1,8 @@
+{
+    "mixins": [
+        "./production.mixin.json"
+    ],
+    "production-one": {
+        "production-env-name": "production-one"
+    }
+}

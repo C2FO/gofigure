@@ -200,6 +200,7 @@
 <li><a href="#monitoringCB">Property Change Callback</a></li>
 </ul>
 </li>
+<li><a href="#environmentVariables">Environment Variables</a></li>
 <li><a href="#environments">Environments</a></li>
 <li><a href="#type">Node Type</a></li>
 </ul>
@@ -414,6 +415,47 @@ loading.on(&quot;my.cool.property&quot;, function(propName, newValue){
 loading.on(&quot;my.cool.property&quot;, function(propName, newValue, configObject){
   //...do something
 });</code></pre>
+<p><a name="environmentVariables"></a></p>
+<h2 id="environment-variables">Environment Variables</h2>
+<p><code>gofigure</code> supports the replacement of environment variables in the configurations usings the following syntax.</p>
+<ul>
+<li><code>${ENV_VARIABLE_NAME}</code> - Sets the value to <code>process.env.ENV_VARIABLE_NAME</code> or <code>&#39;&#39;</code> if it is unset</li>
+<li><code>${ENV_VARIABLE_NAME:-default}</code> - Evaluates to the default value if the <code>ENV_VARIABLE_NAME</code> is unset or empty</li>
+<li><code>${ENV_VARIABLE_NAME-default}</code> - Evaluates to the default value if the <code>ENV_VARIABLE_NAME</code> is unset</li>
+<li><code>${ENV_VARIABLE_NAME:?err}</code> - Throws an error with the message if <code>ENV_VARIABLE_NAME</code> is unset or empty</li>
+<li><code>${ENV_VARIABLE_NAME?err}</code> - Throws an error with the message if <code>ENV_VARIABLE_NAME</code> is unset</li>
+</ul>
+<p>You can use <code>$$</code> if you want to ignore a substitution <code>$${SOME_VALUE}</code>.</p>
+<h3 id="example">Example</h3>
+<p>Given the following config</p>
+<pre class='prettyprint linenums lang-js'><code class="lang-json">{
+    &quot;a&quot;: &quot;${ENV_VAR_A}&quot;,
+    &quot;b&quot; : {
+        &quot;c&quot;: &quot;${ENV_VAR_B:-b.c}&quot; 
+    },
+    &quot;arr&quot;: [&quot;${ARR_INDEX_0}&quot;, &quot;${ARR_INDEX_1}&quot;],
+    &quot;arrWithObjects&quot;: [
+        { &quot;value&quot;: &quot;${ARR_INDEX_0}&quot; },
+        { &quot;value&quot;: &quot;${ARR_INDEX_1}&quot; }
+    ]
+}</code></pre>
+<p>And the following environemnt</p>
+<pre class='prettyprint linenums lang-js'><code class="lang-sh">ENV_VAR_A=a
+ENV_VAR_B=
+ARR_INDEX_0=zero
+ARR_INDEX_0=one</code></pre>
+<p>Would produce </p>
+<pre class='prettyprint linenums lang-js'><code class="lang-json">{
+    &quot;a&quot;: &quot;a&quot;,
+    &quot;b&quot; : {
+        &quot;c&quot;: &quot;b.c&quot; 
+    },
+    &quot;arr&quot;: [&quot;zero&quot;, &quot;one&quot;],
+    &quot;arrWithObjects&quot;: [
+        { &quot;value&quot;: &quot;zero&quot; },
+        { &quot;value&quot;: &quot;one&quot; }
+    ]
+}</code></pre>
 <p><a name="environments"></a></p>
 <h2 id="environments">Environments</h2>
 <p><strong>Reserved Property Names</strong></p>
@@ -587,7 +629,7 @@ var ETCD_CONFIG = {endpoints: [&quot;127.0.0.1:4001&quot;], root: &quot;/appname
 <p><a name="type"></a></p>
 <h2 id="node_type">NODE_TYPE</h2>
 <p><strong>NOTE</strong> This is to used with <a href="#environments"><code>NODE_ENV</code></a>.</p>
-<p>Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default <code>gofigure</code> will look for <code>NODE_TYPE</code> and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the <code>environment</code> to production and <code>nodetype</code> to webapp.</p>
+<p>Since Etcd is a centralized configuration store, the concept of a node type needs to be introduced. By default <code>gofigure</code> will look for <code>NODE_TYPE</code> and, if it is set, then it will use it. To programmatically load just the production webapp properties set, the <code>environment</code> to production and <code>nodeType</code> to webapp.</p>
 <pre class='prettyprint linenums lang-js'><code class="lang-javascript">var gofigure = require(&quot;gofigure&quot;);
 
 var ETCD_CONFIG = {endpoints: [&quot;127.0.0.1:4001&quot;], root: &quot;/appname&quot;};
@@ -595,7 +637,7 @@ var ETCD_CONFIG = {endpoints: [&quot;127.0.0.1:4001&quot;], root: &quot;/appname
 var loader = gofigure({
   locations : [ETCD_CONFIG],
   environment : &quot;production&quot;,
-  nodetype : &quot;webapp&quot;
+  nodeType : &quot;webapp&quot;
 });</code></pre>
 <p><strong>Type Layout</strong></p>
 <p>When using <code>NODE_TYPE</code> you will need to use the <code>type</code> property in your json, and Etcd. If process.env.NODE_TYPE is set, <code>gofigure</code> will look for the following:</p>
