@@ -1,7 +1,7 @@
-'use strict';
+
 
 const assert = require('assert');
-const EventEmitter = require('events').EventEmitter;
+const { EventEmitter } = require('events');
 const _ = require('lodash');
 const merger = require('../../lib/processor/merger');
 
