@@ -1,6 +1,9 @@
 # v1.0.0
 
 * Add env variable support
+* Added test coverage
+* Updated to support > node 8
+* Updated README
 
 # v0.2.1
 

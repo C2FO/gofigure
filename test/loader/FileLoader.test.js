@@ -1,4 +1,4 @@
-'use strict';
+
 
 process.env.NODE_ENV = '';
 const assert = require('assert');

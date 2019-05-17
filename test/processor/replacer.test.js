@@ -1,6 +1,5 @@
 /* eslint-disable no-template-curly-in-string */
 
-'use strict';
 
 const assert = require('assert');
 const replacer = require('../../lib/processor/replacer');

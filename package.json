@@ -3,13 +3,11 @@
   "description": "Configuration library for node",
   "version": "1.0.0",
   "scripts": {
-    "mocha": "mocha test/ --recursive",
+    "mocha": "nyc mocha test/ --recursive",
     "test": "npm run eslint && npm run mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "eslint": "eslint lib/. test/.",
-    "eslint-fix": "eslint lib/. test/. --fix",
-    "docs": "npm run remove-docs && npm run create-docs",
-    "remove-docs": "rm -rf docs/*",
-    "create-docs": "coddoc -f multi-html -d ./lib --dir ./docs"
+    "eslint-fix": "eslint lib/. test/. --fix"
   },
   "keywords": [
     "Config",
@@ -18,9 +16,7 @@
     "JSON",
     "Properties",
     "Property",
-    "Environment Variables",
-    "etcd",
-    "raft"
+    "Environment Variables"
   ],
   "homepage": "http://c2fo.github.com/gofigure",
   "repository": {
@@ -28,20 +24,16 @@
     "url": "git@github.com:C2FO/gofigure.git"
   },
   "dependencies": {
-    "glob": "~3.1.21",
-    "lodash": "3.10.1",
-    "node-etcd": "~4.2.1"
+    "glob": "^7.1.4",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.3.1",
-    "coddoc": "0.0.3",
+    "coveralls": "^3.0.3",
     "eslint": "4.19.1",
     "eslint-config-airbnb-base": "13.0.0",
     "eslint-plugin-import": "2.13.0",
     "mocha": "^5.2.0",
-    "nock": "1.1.x"
+    "nyc": "^14.1.1"
   },
   "author": "Doug Martin (doug.martin@c2fo.com)",
   "main": "index.js",
@@ -49,9 +41,13 @@
     "lib": "lib"
   },
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 8.0.0"
   },
   "contributors": [
+    {
+      "name": "Doug Martin",
+      "email": "doug.martin@c2fo.com"
+    },
     {
       "name": "Bryan Rockwood",
       "email": "bryan.rockwood@c2fo.com"

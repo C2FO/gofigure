@@ -1,6 +1,5 @@
 /* eslint-disable no-template-curly-in-string */
 
-'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -181,17 +180,17 @@ const configsWithMixins = {
     developmentMixin: { config: developmentMixin, file: path.resolve(__dirname, 'config-mixin/development.mixin.json') },
 };
 
-function createConfigs() {
-    writeConfigs(configs);
-    writeConfigs(configsWithMixins);
-}
-
 function writeConfigs(configsToWrite) {
     Object.keys(configsToWrite).forEach((key) => {
         const config = configsToWrite[key];
         fs.unlinkSync(config.file);
         fs.writeFileSync(config.file, JSON.stringify(config.config, null, 4));
     });
+}
+
+function createConfigs() {
+    writeConfigs(configs);
+    writeConfigs(configsWithMixins);
 }
 
 function updateConfig(config, update) {
@@ -206,10 +205,6 @@ function updateConfig(config, update) {
     }
 }
 
-function allDeepMerge() {
-    return Object.keys(configs).reduce((config, key) => _.merge(config, configs[key].config), {});
-}
-
 function setTimeoutPromise(timeout) {
     return new Promise((resolve) => {
         setTimeout(() => resolve(), timeout);
@@ -217,9 +212,9 @@ function setTimeoutPromise(timeout) {
 }
 
 function rejectIfError(rej, fn) {
-    return function _rejectIfError() {
+    return function _rejectIfError(...args) {
         try {
-            fn.apply(undefined, arguments);
+            fn(...args);
         } catch (e) {
             rej(e);
         }
@@ -227,7 +222,6 @@ function rejectIfError(rej, fn) {
 }
 
 module.exports = {
-    allDeepMerge,
     updateConfig,
     createConfigs,
     setTimeoutPromise,
