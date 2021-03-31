@@ -24,7 +24,7 @@
     "url": "git@github.com:C2FO/gofigure.git"
   },
   "dependencies": {
-    "glob": "^7.1.4",
+    "glob": "^7.1.6",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
