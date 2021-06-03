@@ -1,6 +1,4 @@
 /* eslint-disable no-template-curly-in-string */
-
-const assert = require('assert');
 const replacer = require('../../lib/processor/replacer');
 
 describe('processor replacer', () => {
@@ -11,25 +9,13 @@ describe('processor replacer', () => {
                 ENV_B: 'b_env_var',
             };
             // simple
-            assert.strictEqual(
-                replacer.doReplaceOnString('${ENV_A}', envVariables),
-                envVariables.ENV_A
-            );
+            expect(replacer.doReplaceOnString('${ENV_A}', envVariables)).toEqual(envVariables.ENV_A);
             // multiples
-            assert.strictEqual(
-                replacer.doReplaceOnString('${ENV_A}-${ENV_B}', envVariables),
-                `${envVariables.ENV_A}-${envVariables.ENV_B}`
-            );
+            expect(replacer.doReplaceOnString('${ENV_A}-${ENV_B}', envVariables)).toEqual(`${envVariables.ENV_A}-${envVariables.ENV_B}`);
             // multiples with an escaped
-            assert.strictEqual(
-                replacer.doReplaceOnString('${ENV_A}-$${ENV_B}-${ENV_B}', envVariables),
-                `${envVariables.ENV_A}-$\${ENV_B}-${envVariables.ENV_B}`
-            );
+            expect(replacer.doReplaceOnString('${ENV_A}-$${ENV_B}-${ENV_B}', envVariables)).toEqual(`${envVariables.ENV_A}-$\${ENV_B}-${envVariables.ENV_B}`);
             // env nested inside of an escaped one
-            assert.strictEqual(
-                replacer.doReplaceOnString('${ENV_A}-$${B-${ENV_B}}', envVariables),
-                `${envVariables.ENV_A}-$\${B-${envVariables.ENV_B}}`
-            );
+            expect(replacer.doReplaceOnString('${ENV_A}-$${B-${ENV_B}}', envVariables)).toEqual(`${envVariables.ENV_A}-$\${B-${envVariables.ENV_B}}`);
         });
 
         describe('with default value', () => {
@@ -40,49 +26,25 @@ describe('processor replacer', () => {
                         ENV_B: 'B_ENV_VAR',
                     };
                     // simple
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}', envVariables),
-                        'A_ENV_VAR'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}', envVariables)).toEqual('A_ENV_VAR');
                     // multiples
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-${ENV_B:-b_env_var}', envVariables),
-                        'A_ENV_VAR-B_ENV_VAR'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-${ENV_B:-b_env_var}', envVariables)).toEqual('A_ENV_VAR-B_ENV_VAR');
                     // multiples with an escaped
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${ENV_B}-${ENV_B:-b_env_var}', envVariables),
-                        'A_ENV_VAR-$${ENV_B}-B_ENV_VAR'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${ENV_B}-${ENV_B:-b_env_var}', envVariables)).toEqual('A_ENV_VAR-$${ENV_B}-B_ENV_VAR');
                     // env nested inside of an escaped one
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${B:-${ENV_B:-b_env_var}}', envVariables),
-                        'A_ENV_VAR-$${B:-B_ENV_VAR}'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${B:-${ENV_B:-b_env_var}}', envVariables)).toEqual('A_ENV_VAR-$${B:-B_ENV_VAR}');
                 });
 
                 it('should use default values if provided and the ENV variable is unset', () => {
                     const envVariables = {};
                     // simple
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}', envVariables),
-                        'a_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}', envVariables)).toBe('a_env_var');
                     // multiples
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-${ENV_B:-b_env_var}', envVariables),
-                        'a_env_var-b_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-${ENV_B:-b_env_var}', envVariables)).toBe('a_env_var-b_env_var');
                     // multiples with an escaped
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${ENV_B}-${ENV_B:-b_env_var}', envVariables),
-                        'a_env_var-$${ENV_B}-b_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${ENV_B}-${ENV_B:-b_env_var}', envVariables)).toBe('a_env_var-$${ENV_B}-b_env_var');
                     // env nested inside of an escaped one
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${B:-${ENV_B:-b_env_var}}', envVariables),
-                        'a_env_var-$${B:-b_env_var}'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${B:-${ENV_B:-b_env_var}}', envVariables)).toBe('a_env_var-$${B:-b_env_var}');
                 });
 
                 it('should use default values if provided and the ENV variable is empty', () => {
@@ -91,25 +53,13 @@ describe('processor replacer', () => {
                         ENV_B: '',
                     };
                     // simple
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}', envVariables),
-                        'a_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}', envVariables)).toBe('a_env_var');
                     // multiples
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-${ENV_B:-b_env_var}', envVariables),
-                        'a_env_var-b_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-${ENV_B:-b_env_var}', envVariables)).toBe('a_env_var-b_env_var');
                     // multiples with an escaped
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${ENV_B}-${ENV_B:-b_env_var}', envVariables),
-                        'a_env_var-$${ENV_B}-b_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${ENV_B}-${ENV_B:-b_env_var}', envVariables)).toBe('a_env_var-$${ENV_B}-b_env_var');
                     // env nested inside of an escaped one
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${B:-${ENV_B:-b_env_var}}', envVariables),
-                        'a_env_var-$${B:-b_env_var}'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A:-a_env_var}-$${B:-${ENV_B:-b_env_var}}', envVariables)).toBe('a_env_var-$${B:-b_env_var}');
                 });
             });
 
@@ -120,49 +70,25 @@ describe('processor replacer', () => {
                         ENV_B: 'B_ENV_VAR',
                     };
                     // simple
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}', envVariables),
-                        'A_ENV_VAR'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}', envVariables)).toBe('A_ENV_VAR');
                     // multiples
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-${ENV_B-b_env_var}', envVariables),
-                        'A_ENV_VAR-B_ENV_VAR'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-${ENV_B-b_env_var}', envVariables)).toBe('A_ENV_VAR-B_ENV_VAR');
                     // multiples with an escaped
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-$${ENV_B}-${ENV_B-b_env_var}', envVariables),
-                        'A_ENV_VAR-$${ENV_B}-B_ENV_VAR'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-$${ENV_B}-${ENV_B-b_env_var}', envVariables)).toBe('A_ENV_VAR-$${ENV_B}-B_ENV_VAR');
                     // env nested inside of an escaped one
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-$${B-${ENV_B-b_env_var}}', envVariables),
-                        'A_ENV_VAR-$${B-B_ENV_VAR}'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-$${B-${ENV_B-b_env_var}}', envVariables)).toBe('A_ENV_VAR-$${B-B_ENV_VAR}');
                 });
 
                 it('should use default values if provided and the ENV variable is not set', () => {
                     const envVariables = {};
                     // simple
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}', envVariables),
-                        'a_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}', envVariables)).toBe('a_env_var');
                     // multiples
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-${ENV_B-b_env_var}', envVariables),
-                        'a_env_var-b_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-${ENV_B-b_env_var}', envVariables)).toBe('a_env_var-b_env_var');
                     // multiples with an escaped
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-$${ENV_B}-${ENV_B-b_env_var}', envVariables),
-                        'a_env_var-$${ENV_B}-b_env_var'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-$${ENV_B}-${ENV_B-b_env_var}', envVariables)).toBe('a_env_var-$${ENV_B}-b_env_var');
                     // env nested inside of an escaped one
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-$${B:-${ENV_B-b_env_var}}', envVariables),
-                        'a_env_var-$${B:-b_env_var}'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-$${B:-${ENV_B-b_env_var}}', envVariables)).toBe('a_env_var-$${B:-b_env_var}');
                 });
 
                 it('should use default values if provided and the ENV variable is empty', () => {
@@ -171,25 +97,13 @@ describe('processor replacer', () => {
                         ENV_B: '',
                     };
                     // simple
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}', envVariables),
-                        ''
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}', envVariables)).toBe('');
                     // multiples
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-${ENV_B-b_env_var}', envVariables),
-                        '-'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-${ENV_B-b_env_var}', envVariables)).toBe('-');
                     // multiples with an escaped
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-$${ENV_B}-${ENV_B-b_env_var}', envVariables),
-                        '-$${ENV_B}-'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-$${ENV_B}-${ENV_B-b_env_var}', envVariables)).toBe('-$${ENV_B}-');
                     // env nested inside of an escaped one
-                    assert.strictEqual(
-                        replacer.doReplaceOnString('${ENV_A-a_env_var}-$${B:-${ENV_B-b_env_var}}', envVariables),
-                        '-$${B:-}'
-                    );
+                    expect(replacer.doReplaceOnString('${ENV_A-a_env_var}-$${B:-${ENV_B-b_env_var}}', envVariables)).toBe('-$${B:-}');
                 });
             });
         });
@@ -200,32 +114,32 @@ describe('processor replacer', () => {
                     ENV_A: 'a_env_var',
                 };
                 // simple
-                assert.strictEqual(replacer.doReplaceOnString('${ENV_A:?"Missing ENV_A variable"}', envVariables), 'a_env_var');
+                expect(replacer.doReplaceOnString('${ENV_A:?"Missing ENV_A variable"}', envVariables)).toBe('a_env_var');
             });
 
             it('should throw an error if the throw if unset is true and the ENV variable is not present', () => {
                 const envVariables = {};
                 // simple
-                assert.throws(() => {
+                expect(() => {
                     replacer.doReplaceOnString('${ENV_A:?Missing ENV_A variable}', envVariables);
-                }, (e) => e.message === 'Missing ENV_A variable');
+                }).toThrow('Missing ENV_A variable');
             });
 
             it('should throw an default error if the throw if unset is true and the ENV variable is not present', () => {
                 const envVariables = {};
                 // simple
-                assert.throws(() => {
+                expect(() => {
                     replacer.doReplaceOnString('${ENV_A:?}', envVariables);
-                }, (e) => e.message === "'ENV_A' is either empty or unset in ENV variables");
+                }).toThrow("'ENV_A' is either empty or unset in ENV variables");
             });
 
             it('should throw an error if the value is empty', () => {
                 const envVariables = {
                     ENV_A: '',
                 };
-                assert.throws(() => {
+                expect(() => {
                     replacer.doReplaceOnString('${ENV_A:?Missing ENV_A variable}', envVariables);
-                }, (e) => e.message === 'Missing ENV_A variable');
+                }).toThrow('Missing ENV_A variable');
             });
         });
 
@@ -235,30 +149,30 @@ describe('processor replacer', () => {
                     ENV_A: 'a_env_var',
                 };
                 // simple
-                assert.strictEqual(replacer.doReplaceOnString('${ENV_A?"Missing ENV_A variable"}', envVariables), 'a_env_var');
+                expect(replacer.doReplaceOnString('${ENV_A?"Missing ENV_A variable"}', envVariables)).toBe('a_env_var');
             });
 
             it('should throw an error if the throw if unset is true and the ENV variable is not present', () => {
                 const envVariables = {};
                 // simple
-                assert.throws(() => {
+                expect(() => {
                     replacer.doReplaceOnString('${ENV_A?Missing ENV_A variable}', envVariables);
-                }, (e) => e.message === 'Missing ENV_A variable');
+                }).toThrow('Missing ENV_A variable');
             });
 
             it('should throw a default error if the throw if unset is true and the ENV variable is not present', () => {
                 const envVariables = {};
                 // simple
-                assert.throws(() => {
+                expect(() => {
                     replacer.doReplaceOnString('${ENV_A?}', envVariables);
-                }, (e) => e.message === "'ENV_A' is either empty or unset in ENV variables");
+                }).toThrow("'ENV_A' is either empty or unset in ENV variables");
             });
 
             it('should NOT throw an error if the value is empty', () => {
                 const envVariables = {
                     ENV_A: '',
                 };
-                assert.strictEqual(replacer.doReplaceOnString('${ENV_A?Missing ENV_A variable"}', envVariables), '');
+                expect(replacer.doReplaceOnString('${ENV_A?Missing ENV_A variable"}', envVariables)).toBe('');
             });
         });
     });
@@ -273,7 +187,7 @@ describe('processor replacer', () => {
                     ENV_A: 'a_env_var',
                 },
             });
-            assert.deepStrictEqual(replaced, {
+            expect(replaced).toEqual({
                 a: 'a_env_var',
             });
         });
@@ -289,7 +203,7 @@ describe('processor replacer', () => {
                     ENV_A_B: 'a_b_env_var',
                 },
             });
-            assert.deepStrictEqual(replaced, {
+            expect(replaced).toEqual({
                 a: { b: 'a_b_env_var' },
             });
         });
@@ -306,7 +220,7 @@ describe('processor replacer', () => {
                     ENV_1: 'one',
                 },
             });
-            assert.deepStrictEqual(replaced, {
+            expect(replaced).toEqual({
                 a: [ 'zero', 'one' ],
             });
         });
@@ -321,7 +235,7 @@ describe('processor replacer', () => {
                     ENV_1: 'one',
                 },
             });
-            assert.deepStrictEqual(replaced, {
+            expect(replaced).toEqual({
                 a: [ { a: { value: 'zero' } }, { a: { value: 'one' } } ],
             });
         });
@@ -339,7 +253,7 @@ describe('processor replacer', () => {
                 ENV_1: 'one',
             },
         });
-        assert.deepStrictEqual(replaced, {
+        expect(replaced).toEqual({
             true: true,
             false: false,
             number: 0.01,

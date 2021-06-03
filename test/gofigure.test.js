@@ -1,158 +1,157 @@
 process.env.NODE_ENV = '';
 
-const assert = require('assert');
 const path = require('path');
 const _ = require('lodash');
 
-const helper = require('./helper');
+const fixtures = require('./__fixtures__');
 const goFigure = require('../lib');
 
 const {
     conf1, conf2, envConf, sharedEnvConf,
-} = helper;
+} = fixtures;
 
 describe('gofigure', () => {
-    beforeEach(() => helper.createConfigs());
+    beforeEach(() => fixtures.createConfigs());
 
-    afterEach(() => helper.createConfigs());
+    afterEach(() => fixtures.createConfigs());
 
     const createUpdatesPromise = (configName, updates) => updates
-        .reduce((p, change) => p.then(() => helper.updateConfig(configName, change))
-            .then(() => helper.setTimeoutPromise(200)), helper.setTimeoutPromise(10));
+        .reduce((p, change) => p.then(() => fixtures.updateConfig(configName, change))
+            .then(() => fixtures.setTimeoutPromise(200)), fixtures.setTimeoutPromise(10));
 
     describe('#load', () => {
         it('load configuration from directories', () => {
-            const config1 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs1') ] });
-            const config2 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs2') ] });
+            const config1 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1') ] });
+            const config2 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs2') ] });
             return config1.load()
-                .then((config) => assert.deepStrictEqual(config, conf1))
+                .then((config) => expect(config).toEqual(conf1))
                 .then(() => config2.load())
-                .then((config) => assert.deepStrictEqual(config, conf2));
+                .then((config) => expect(config).toEqual(conf2));
         });
 
         it('load configuration from files', () => {
-            const config1 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs1/config1.json') ] });
-            const config2 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs2/config2.json') ] });
+            const config1 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1/config1.json') ] });
+            const config2 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs2/config2.json') ] });
             return config1.load()
-                .then((config) => assert.deepStrictEqual(config, conf1))
+                .then((config) => expect(config).toEqual(conf1))
                 .then(() => config2.load())
-                .then((config) => assert.deepStrictEqual(config, conf2));
+                .then((config) => expect(config).toEqual(conf2));
         });
 
         describe('with an env', () => {
             it('from directories', () => {
-                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
-                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
-                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
+                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env') ] });
+                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env') ] });
+                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env') ] });
                 return configDev.load()
-                    .then((config) => assert.deepStrictEqual(config, envConf.development))
+                    .then((config) => expect(config).toEqual(envConf.development))
                     .then(() => configProd.load())
-                    .then((config) => assert.deepStrictEqual(config, envConf.production))
+                    .then((config) => expect(config).toEqual(envConf.production))
                     .then(() => configTest.load())
-                    .then((config) => assert.deepStrictEqual(config, envConf.test));
+                    .then((config) => expect(config).toEqual(envConf.test));
             });
 
             it('from files', () => {
-                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
-                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
-                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
+                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
+                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
+                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
                 return configDev.load()
-                    .then((config) => assert.deepStrictEqual(config, envConf.development))
+                    .then((config) => expect(config).toEqual(envConf.development))
                     .then(() => configProd.load())
-                    .then((config) => assert.deepStrictEqual(config, envConf.production))
+                    .then((config) => expect(config).toEqual(envConf.production))
                     .then(() => configTest.load())
-                    .then((config) => assert.deepStrictEqual(config, envConf.test));
+                    .then((config) => expect(config).toEqual(envConf.test));
             });
         });
 
         describe('with a mixin', () => {
             it('from directories', () => {
-                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const devOne = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinDevelopmentOne['development-one'],
-                    helper.developmentMixin.mixin);
-                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinDevelopmentOne['development-one'],
+                    fixtures.developmentMixin.mixin);
+                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const devTwo = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinDevelopmentTwo['development-two'],
-                    helper.developmentMixin.mixin);
-                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinDevelopmentTwo['development-two'],
+                    fixtures.developmentMixin.mixin);
+                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const prodOne = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinProductionOne['production-one'],
-                    helper.productionMixin.mixin);
-                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinProductionOne['production-one'],
+                    fixtures.productionMixin.mixin);
+                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const prodTwo = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinProductionTwo['production-two'],
-                    helper.productionMixin.mixin);
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinProductionTwo['production-two'],
+                    fixtures.productionMixin.mixin);
                 return configDevOne.load()
-                    .then((config) => assert.deepStrictEqual(config, devOne))
+                    .then((config) => expect(config).toEqual(devOne))
                     .then(() => configDevTwo.load())
-                    .then((config) => assert.deepStrictEqual(config, devTwo))
+                    .then((config) => expect(config).toEqual(devTwo))
                     .then(() => configProdOne.load())
-                    .then((config) => assert.deepStrictEqual(config, prodOne))
+                    .then((config) => expect(config).toEqual(prodOne))
                     .then(() => configProdTwo.load())
-                    .then((config) => assert.deepStrictEqual(config, prodTwo));
+                    .then((config) => expect(config).toEqual(prodTwo));
             });
 
             it('from files', () => {
-                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.development-one.json') ] });
+                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.development-one.json') ] });
                 const devOne = _.merge({},
-                    helper.configMixinDevelopmentOne['development-one'],
-                    helper.developmentMixin.mixin);
-                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.development-two.json') ] });
+                    fixtures.configMixinDevelopmentOne['development-one'],
+                    fixtures.developmentMixin.mixin);
+                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.development-two.json') ] });
                 const devTwo = _.merge({},
-                    helper.configMixinDevelopmentTwo['development-two'],
-                    helper.developmentMixin.mixin);
-                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.production-one.json') ] });
+                    fixtures.configMixinDevelopmentTwo['development-two'],
+                    fixtures.developmentMixin.mixin);
+                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.production-one.json') ] });
                 const prodOne = _.merge({},
-                    helper.configMixinProductionOne['production-one'],
-                    helper.productionMixin.mixin);
-                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.production-two.json') ] });
+                    fixtures.configMixinProductionOne['production-one'],
+                    fixtures.productionMixin.mixin);
+                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.production-two.json') ] });
                 const prodTwo = _.merge({},
-                    helper.configMixinProductionTwo['production-two'],
-                    helper.productionMixin.mixin);
+                    fixtures.configMixinProductionTwo['production-two'],
+                    fixtures.productionMixin.mixin);
                 return configDevOne.load()
-                    .then((config) => assert.deepStrictEqual(config, devOne))
+                    .then((config) => expect(config).toEqual(devOne))
                     .then(() => configDevTwo.load())
-                    .then((config) => assert.deepStrictEqual(config, devTwo))
+                    .then((config) => expect(config).toEqual(devTwo))
                     .then(() => configProdOne.load())
-                    .then((config) => assert.deepStrictEqual(config, prodOne))
+                    .then((config) => expect(config).toEqual(prodOne))
                     .then(() => configProdTwo.load())
-                    .then((config) => assert.deepStrictEqual(config, prodTwo));
+                    .then((config) => expect(config).toEqual(prodTwo));
             });
         });
     });
 
     describe('#loadSync', () => {
         it('load configuration from certain directories', () => {
-            const config1 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs1') ] });
-            const config2 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs2') ] });
-            assert.deepStrictEqual(config1.loadSync(), conf1);
-            assert.deepStrictEqual(config2.loadSync(), conf2);
+            const config1 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1') ] });
+            const config2 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs2') ] });
+            expect(config1.loadSync()).toEqual(conf1);
+            expect(config2.loadSync()).toEqual(conf2);
         });
 
         it('load configuration from certain files', () => {
-            const config1 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs1/config1.json') ] });
-            const config2 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs2/config2.json') ] });
-            assert.deepStrictEqual(config1.loadSync(), conf1);
-            assert.deepStrictEqual(config2.loadSync(), conf2);
+            const config1 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1/config1.json') ] });
+            const config2 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs2/config2.json') ] });
+            expect(config1.loadSync()).toEqual(conf1);
+            expect(config2.loadSync()).toEqual(conf2);
         });
 
         it('load should call listeners when setting', () => {
-            const config1 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs1/config1.json') ] });
+            const config1 = goFigure({ locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1/config1.json') ] });
             const res = [];
             [ 'a', 'b', 'b.c', 'b.f', 'e', 'e.f', 'e.g', 'e.g.h' ].forEach((topic) => {
                 config1.on(topic, (k, v) => {
                     res.push([ topic, k, v ]);
                 });
             });
-            assert.deepStrictEqual(config1.loadSync(), conf1);
-            return helper.setTimeoutPromise(50)
+            expect(config1.loadSync()).toEqual(conf1);
+            return fixtures.setTimeoutPromise(50)
                 .then(() => {
-                    assert.deepStrictEqual(res, [
+                    expect(res).toEqual([
                         [ 'a', 'a', 1 ],
                         [ 'b', 'b', { c: 1, d: 2 } ],
                         [ 'b.c', 'b.c', 1 ],
@@ -166,100 +165,100 @@ describe('gofigure', () => {
 
         describe('with an env', () => {
             it('from directories', () => {
-                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
-                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
-                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
-                assert.deepStrictEqual(configDev.loadSync(), envConf.development);
-                assert.deepStrictEqual(configProd.loadSync(), envConf.production);
-                assert.deepStrictEqual(configTest.loadSync(), envConf.test);
+                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env') ] });
+                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env') ] });
+                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env') ] });
+                expect(configDev.loadSync()).toEqual(envConf.development);
+                expect(configProd.loadSync()).toEqual(envConf.production);
+                expect(configTest.loadSync()).toEqual(envConf.test);
             });
 
             it('from files', () => {
-                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
-                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
-                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
-                assert.deepStrictEqual(configDev.loadSync(), envConf.development);
-                assert.deepStrictEqual(configProd.loadSync(), envConf.production);
-                assert.deepStrictEqual(configTest.loadSync(), envConf.test);
+                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
+                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
+                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
+                expect(configDev.loadSync()).toEqual(envConf.development);
+                expect(configProd.loadSync()).toEqual(envConf.production);
+                expect(configTest.loadSync()).toEqual(envConf.test);
             });
         });
 
         describe('with an shared env', () => {
             it('from directories', () => {
-                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, 'configs/config-shared-env') ] });
-                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-shared-env') ] });
-                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-shared-env') ] });
-                assert.deepStrictEqual(configDev.loadSync(), _.merge({}, sharedEnvConf['*'], sharedEnvConf.development));
-                assert.deepStrictEqual(configProd.loadSync(), _.merge({}, sharedEnvConf['*'], sharedEnvConf.production));
-                assert.deepStrictEqual(configTest.loadSync(), _.merge({}, sharedEnvConf['*'], sharedEnvConf.test));
+                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-shared-env') ] });
+                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-shared-env') ] });
+                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-shared-env') ] });
+                expect(configDev.loadSync()).toEqual(_.merge({}, sharedEnvConf['*'], sharedEnvConf.development));
+                expect(configProd.loadSync()).toEqual(_.merge({}, sharedEnvConf['*'], sharedEnvConf.production));
+                expect(configTest.loadSync()).toEqual(_.merge({}, sharedEnvConf['*'], sharedEnvConf.test));
             });
 
             it('from files', () => {
-                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, 'configs/config-shared-env/config.json') ] });
-                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-shared-env/config.json') ] });
-                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-shared-env/config.json') ] });
-                assert.deepStrictEqual(configDev.loadSync(), _.merge({}, sharedEnvConf['*'], sharedEnvConf.development));
-                assert.deepStrictEqual(configProd.loadSync(), _.merge({}, sharedEnvConf['*'], sharedEnvConf.production));
-                assert.deepStrictEqual(configTest.loadSync(), _.merge({}, sharedEnvConf['*'], sharedEnvConf.test));
+                const configDev = goFigure({ environment: 'development', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-shared-env/config.json') ] });
+                const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-shared-env/config.json') ] });
+                const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, '__fixtures__/configs/config-shared-env/config.json') ] });
+                expect(configDev.loadSync()).toEqual(_.merge({}, sharedEnvConf['*'], sharedEnvConf.development));
+                expect(configProd.loadSync()).toEqual(_.merge({}, sharedEnvConf['*'], sharedEnvConf.production));
+                expect(configTest.loadSync()).toEqual(_.merge({}, sharedEnvConf['*'], sharedEnvConf.test));
             });
         });
 
         describe('with a mixin', () => {
             it('from directories', () => {
-                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const devOne = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinDevelopmentOne['development-one'],
-                    helper.developmentMixin.mixin);
-                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinDevelopmentOne['development-one'],
+                    fixtures.developmentMixin.mixin);
+                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const devTwo = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinDevelopmentTwo['development-two'],
-                    helper.developmentMixin.mixin);
-                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinDevelopmentTwo['development-two'],
+                    fixtures.developmentMixin.mixin);
+                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const prodOne = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinProductionOne['production-one'],
-                    helper.productionMixin.mixin);
-                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, 'config-mixin') ] });
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinProductionOne['production-one'],
+                    fixtures.productionMixin.mixin);
+                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin') ] });
                 const prodTwo = _.merge({},
-                    helper.configMixinDefault['*'],
-                    helper.configMixinProductionTwo['production-two'],
-                    helper.productionMixin.mixin);
-                assert.deepStrictEqual(configDevOne.loadSync(), devOne);
-                assert.deepStrictEqual(configDevTwo.loadSync(), devTwo);
-                assert.deepStrictEqual(configProdOne.loadSync(), prodOne);
-                assert.deepStrictEqual(configProdTwo.loadSync(), prodTwo);
+                    fixtures.configMixinDefault['*'],
+                    fixtures.configMixinProductionTwo['production-two'],
+                    fixtures.productionMixin.mixin);
+                expect(configDevOne.loadSync()).toEqual(devOne);
+                expect(configDevTwo.loadSync()).toEqual(devTwo);
+                expect(configProdOne.loadSync()).toEqual(prodOne);
+                expect(configProdTwo.loadSync()).toEqual(prodTwo);
             });
 
             it('from files', () => {
-                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.development-one.json') ] });
+                const configDevOne = goFigure({ environment: 'development-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.development-one.json') ] });
                 const devOne = _.merge({},
-                    helper.configMixinDevelopmentOne['development-one'],
-                    helper.developmentMixin.mixin);
-                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.development-two.json') ] });
+                    fixtures.configMixinDevelopmentOne['development-one'],
+                    fixtures.developmentMixin.mixin);
+                const configDevTwo = goFigure({ environment: 'development-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.development-two.json') ] });
                 const devTwo = _.merge({},
-                    helper.configMixinDevelopmentTwo['development-two'],
-                    helper.developmentMixin.mixin);
-                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.production-one.json') ] });
+                    fixtures.configMixinDevelopmentTwo['development-two'],
+                    fixtures.developmentMixin.mixin);
+                const configProdOne = goFigure({ environment: 'production-one', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.production-one.json') ] });
                 const prodOne = _.merge({},
-                    helper.configMixinProductionOne['production-one'],
-                    helper.productionMixin.mixin);
-                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, 'config-mixin/config-mixin.production-two.json') ] });
+                    fixtures.configMixinProductionOne['production-one'],
+                    fixtures.productionMixin.mixin);
+                const configProdTwo = goFigure({ environment: 'production-two', locations: [ path.resolve(__dirname, '__fixtures__/config-mixin/config-mixin.production-two.json') ] });
                 const prodTwo = _.merge({},
-                    helper.configMixinProductionTwo['production-two'],
-                    helper.productionMixin.mixin);
-                assert.deepStrictEqual(configDevOne.loadSync(), devOne);
-                assert.deepStrictEqual(configDevTwo.loadSync(), devTwo);
-                assert.deepStrictEqual(configProdOne.loadSync(), prodOne);
-                assert.deepStrictEqual(configProdTwo.loadSync(), prodTwo);
+                    fixtures.configMixinProductionTwo['production-two'],
+                    fixtures.productionMixin.mixin);
+                expect(configDevOne.loadSync()).toEqual(devOne);
+                expect(configDevTwo.loadSync()).toEqual(devTwo);
+                expect(configProdOne.loadSync()).toEqual(prodOne);
+                expect(configProdTwo.loadSync()).toEqual(prodTwo);
             });
         });
     });
 
     describe('#on', () => {
         it('monitor configurations in certain directories', () => {
-            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, 'configs/configs1') ] });
+            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1') ] });
             config1.loadSync();
             const res = [];
             [ 'a', 'b.{c|d}', 'e', 'e.g', 'e.g.*' ].forEach((topic) => {
@@ -276,7 +275,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(res, [
+                expect(res).toEqual([
                     { key: 'a', val: 4 },
                     { key: 'a', val: 1 },
                     { key: 'b.c', val: 5 },
@@ -292,7 +291,7 @@ describe('gofigure', () => {
         });
 
         it('monitor configurations of files', () => {
-            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, 'configs/configs1/config1.json') ] });
+            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1/config1.json') ] });
             config1.loadSync();
             const events = [];
             [ 'a', 'b.{c|d}', 'e', 'e.g', 'e.g.*' ].forEach((topic) => {
@@ -309,7 +308,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(events, [
+                expect(events).toEqual([
                     { key: 'a', val: 4 },
                     { key: 'a', val: 1 },
                     { key: 'b.c', val: 5 },
@@ -328,7 +327,7 @@ describe('gofigure', () => {
             const config1 = goFigure({
                 monitor: false,
                 locations: [
-                    { monitor: true, file: path.resolve(__dirname, 'configs/configs1/config1.json') },
+                    { monitor: true, file: path.resolve(__dirname, '__fixtures__/configs/configs1/config1.json') },
                 ],
             });
             config1.loadSync();
@@ -347,7 +346,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(events, [
+                expect(events).toEqual([
                     { key: 'a', val: 4 },
                     { key: 'a', val: 1 },
                     { key: 'b.c', val: 5 },
@@ -366,7 +365,7 @@ describe('gofigure', () => {
             it('monitor configurations of files', () => {
                 const events = {};
                 const configs = [ 'development', 'production', 'test' ].map((env) => {
-                    const config = goFigure({ monitor: true, environment: env, locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
+                    const config = goFigure({ monitor: true, environment: env, locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
                     config.loadSync();
                     events[env] = [];
                     [ 'a', 'b.{c|d}', 'e', 'e.g', 'e.g.*' ].forEach((topic) => {
@@ -390,7 +389,7 @@ describe('gofigure', () => {
                 ];
                 return createUpdatesPromise('envConf', changes).then(() => {
                     configs.forEach((c) => c.stop());
-                    assert.deepStrictEqual(events, {
+                    expect(events).toEqual({
                         development: [
                             { key: 'a', val: 6 },
                             { key: 'a', val: 1 },
@@ -435,7 +434,7 @@ describe('gofigure', () => {
 
     describe('#addListener', () => {
         it('monitor configurations in certain directories', () => {
-            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, 'configs/configs1') ] });
+            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1') ] });
             config1.loadSync();
             const res = [];
             [ 'a', 'b.{c|d}', 'e', 'e.g', 'e.g.*' ].forEach((topic) => {
@@ -452,7 +451,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(res, [
+                expect(res).toEqual([
                     { key: 'a', val: 4 },
                     { key: 'a', val: 1 },
                     { key: 'b.c', val: 5 },
@@ -468,7 +467,7 @@ describe('gofigure', () => {
         });
 
         it('monitor configurations of files', () => {
-            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, 'configs/configs1/config1.json') ] });
+            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1/config1.json') ] });
             config1.loadSync();
             const events = [];
             [ 'a', 'b.{c|d}', 'e', 'e.g', 'e.g.*' ].forEach((topic) => {
@@ -485,7 +484,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(events, [
+                expect(events).toEqual([
                     { key: 'a', val: 4 },
                     { key: 'a', val: 1 },
                     { key: 'b.c', val: 5 },
@@ -504,7 +503,7 @@ describe('gofigure', () => {
             const config1 = goFigure({
                 monitor: false,
                 locations: [
-                    { monitor: true, file: path.resolve(__dirname, 'configs/configs1/config1.json') },
+                    { monitor: true, file: path.resolve(__dirname, '__fixtures__/configs/configs1/config1.json') },
                 ],
             });
             config1.loadSync();
@@ -523,7 +522,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(events, [
+                expect(events).toEqual([
                     { key: 'a', val: 4 },
                     { key: 'a', val: 1 },
                     { key: 'b.c', val: 5 },
@@ -542,7 +541,7 @@ describe('gofigure', () => {
             it('monitor configurations of files', () => {
                 const events = {};
                 const configs = [ 'development', 'production', 'test' ].map((env) => {
-                    const config = goFigure({ monitor: true, environment: env, locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
+                    const config = goFigure({ monitor: true, environment: env, locations: [ path.resolve(__dirname, '__fixtures__/configs/config-env/config.json') ] });
                     config.loadSync();
                     events[env] = [];
                     [ 'a', 'b.{c|d}', 'e', 'e.g', 'e.g.*' ].forEach((topic) => {
@@ -566,7 +565,7 @@ describe('gofigure', () => {
                 ];
                 return createUpdatesPromise('envConf', changes).then(() => {
                     configs.forEach((c) => c.stop());
-                    assert.deepStrictEqual(events, {
+                    expect(events).toEqual({
                         development: [
                             { key: 'a', val: 6 },
                             { key: 'a', val: 1 },
@@ -611,7 +610,7 @@ describe('gofigure', () => {
 
     describe('#once', () => {
         it('should stop listening', () => {
-            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, 'configs/configs1') ] });
+            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1') ] });
             config1.loadSync();
             const events = [];
             config1.once('a', (key, val) => events.push({ key, val, type: 'once' }));
@@ -623,7 +622,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(events, [
+                expect(events).toEqual([
                     { key: 'a', val: 4, type: 'once' },
                     { key: 'a', val: 4, type: 'on' },
                     { key: 'a', val: 1, type: 'on' },
@@ -634,7 +633,7 @@ describe('gofigure', () => {
 
     describe('#removeListener', () => {
         it('should stop listening', () => {
-            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, 'configs/configs1') ] });
+            const config1 = goFigure({ monitor: true, locations: [ path.resolve(__dirname, '__fixtures__/configs/configs1') ] });
             config1.loadSync();
             const events = [];
             const onAndRemove = (key, val) => {
@@ -650,7 +649,7 @@ describe('gofigure', () => {
             ];
             return createUpdatesPromise('conf1', changes).then(() => {
                 config1.stop();
-                assert.deepStrictEqual(events, [
+                expect(events).toEqual([
                     { key: 'a', val: 4, type: 'onAndRemove' },
                     { key: 'a', val: 4, type: 'on' },
                     { key: 'a', val: 1, type: 'on' },

@@ -1,14 +1,13 @@
 process.env.NODE_ENV = '';
-const assert = require('assert');
 const _ = require('lodash');
 const path = require('path');
-const helper = require('../helper');
+const helper = require('../__fixtures__');
 const FileLoader = require('../../lib/loader/FileLoader');
 
 describe('FileLoader', () => {
     it('accept and set a file', () => {
-        const loader = new FileLoader({ file: path.resolve(__dirname, '../configs//configs1/config1.json') });
-        assert.strictEqual(loader.file, path.resolve(__dirname, '../configs//configs1/config1.json'));
+        const loader = new FileLoader({ file: path.resolve(__dirname, '../configs/configs1/config1.json') });
+        expect(loader.file).toBe(path.resolve(__dirname, '../configs/configs1/config1.json'));
     });
 
     beforeEach(() => {
@@ -21,20 +20,20 @@ describe('FileLoader', () => {
 
     describe('#loadSync', () => {
         it('load a file', () => {
-            const loader = new FileLoader({ file: path.resolve(__dirname, '../configs/configs1/config1.json') });
-            assert.deepStrictEqual(loader.loadSync(), helper.conf1);
-            assert.deepStrictEqual(loader.config, helper.conf1);
+            const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/configs/configs1/config1.json') });
+            expect(loader.loadSync()).toEqual(helper.conf1);
+            expect(loader.config).toEqual(helper.conf1);
         });
 
         describe('with mixins', () => {
             it('should load a file and merge in mixins', () => {
-                const loader = new FileLoader({ file: path.resolve(__dirname, '../config-mixin/config-mixin.production-one.json') });
+                const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/config-mixin/config-mixin.production-one.json') });
                 const expectedConfig = _.merge(
                     {}, helper.configMixinProductionOne, { __mixin__: helper.productionMixin.mixin }
                 );
                 return loader.load().then((config) => {
-                    assert.deepStrictEqual(config, expectedConfig);
-                    assert.deepStrictEqual(loader.config, expectedConfig);
+                    expect(config).toEqual(expectedConfig);
+                    expect(loader.config).toEqual(expectedConfig);
                 });
             });
         });
@@ -42,22 +41,22 @@ describe('FileLoader', () => {
 
     describe('#load', () => {
         it('load a file asynchronously', () => {
-            const loader = new FileLoader({ file: path.resolve(__dirname, '../configs/configs1/config1.json') });
+            const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/configs/configs1/config1.json') });
             return loader.load().then((conf) => {
-                assert.deepStrictEqual(conf, helper.conf1);
-                assert.deepStrictEqual(loader.config, helper.conf1);
+                expect(conf).toEqual(helper.conf1);
+                expect(loader.config).toEqual(helper.conf1);
             });
         });
 
         describe('with mixins', () => {
             it('should load a file and merge in mixins', () => {
-                const loader = new FileLoader({ file: path.resolve(__dirname, '../config-mixin/config-mixin.production-one.json') });
+                const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/config-mixin/config-mixin.production-one.json') });
                 const expectedConfig = _.merge(
                     {}, helper.configMixinProductionOne, { __mixin__: helper.productionMixin.mixin }
                 );
                 return loader.load().then((config) => {
-                    assert.deepStrictEqual(config, expectedConfig);
-                    assert.deepStrictEqual(loader.config, expectedConfig);
+                    expect(config).toEqual(expectedConfig);
+                    expect(loader.config).toEqual(expectedConfig);
                 });
             });
         });
@@ -65,13 +64,13 @@ describe('FileLoader', () => {
 
     describe('#watch', () => {
         it('watch a file for changes sync', () => {
-            const loader = new FileLoader({ file: path.resolve(__dirname, '../configs/configs1/config1.json') });
-            assert.deepStrictEqual(loader.loadSync(), helper.conf1);
+            const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/configs/configs1/config1.json') });
+            expect(loader.loadSync()).toEqual(helper.conf1);
 
             return new Promise((res, rej) => {
                 loader.watch().on('change', helper.rejectIfError(rej, (name, conf) => {
-                    assert.strictEqual(name, 'change');
-                    assert.deepStrictEqual(conf, _.merge({}, helper.conf1, { a: 2 }));
+                    expect(name).toBe('change');
+                    expect(conf).toEqual(_.merge({}, helper.conf1, { a: 2 }));
                     loader.unWatch();
                     res();
                 }));
@@ -82,14 +81,14 @@ describe('FileLoader', () => {
         });
 
         it('watch a file for changes async', () => {
-            const loader = new FileLoader({ file: path.resolve(__dirname, '../configs/configs1/config1.json') });
+            const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/configs/configs1/config1.json') });
             return loader.load().then((config) => {
-                assert.deepStrictEqual(config, helper.conf1);
+                expect(config).toEqual(helper.conf1);
 
                 return new Promise((res, rej) => {
                     loader.watch().on('change', helper.rejectIfError(rej, (name, conf) => {
-                        assert.strictEqual(name, 'change');
-                        assert.deepStrictEqual(conf, _.merge({}, helper.conf1, { a: 2 }));
+                        expect(name).toBe('change');
+                        expect(conf).toEqual(_.merge({}, helper.conf1, { a: 2 }));
                         loader.unWatch();
                         res();
                     }));
@@ -101,19 +100,16 @@ describe('FileLoader', () => {
         });
 
         it('watch for changes in mixins sync', () => {
-            const loader = new FileLoader({ file: path.resolve(__dirname, '../config-mixin/config-mixin.production-one.json') });
+            const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/config-mixin/config-mixin.production-one.json') });
             const expectedLoadedConfig = _.merge(
                 {}, helper.configMixinProductionOne, { __mixin__: helper.productionMixin.mixin }
             );
-            assert.deepStrictEqual(loader.loadSync(), expectedLoadedConfig);
+            expect(loader.loadSync()).toEqual(expectedLoadedConfig);
 
             return new Promise((res, rej) => {
                 loader.watch().on('change', helper.rejectIfError(rej, (name, conf) => {
-                    assert.strictEqual(name, 'change');
-                    assert.deepStrictEqual(
-                        conf,
-                        _.merge({}, expectedLoadedConfig, { __mixin__: { a: 2 } })
-                    );
+                    expect(name).toBe('change');
+                    expect(conf).toEqual(_.merge({}, expectedLoadedConfig, { __mixin__: { a: 2 } }));
                     loader.unWatch();
                     res();
                 }));
@@ -124,20 +120,17 @@ describe('FileLoader', () => {
         });
 
         it('watch for changes in mixins async', () => {
-            const loader = new FileLoader({ file: path.resolve(__dirname, '../config-mixin/config-mixin.production-one.json') });
+            const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/config-mixin/config-mixin.production-one.json') });
             const expectedLoadedConfig = _.merge(
                 {}, helper.configMixinProductionOne, { __mixin__: helper.productionMixin.mixin }
             );
 
             return loader.load().then((config) => {
-                assert.deepStrictEqual(config, expectedLoadedConfig);
+                expect(config).toEqual(expectedLoadedConfig);
                 return new Promise((res, rej) => {
                     loader.watch().on('change', helper.rejectIfError(rej, (name, conf) => {
-                        assert.strictEqual(name, 'change');
-                        assert.deepStrictEqual(
-                            conf,
-                            _.merge({}, expectedLoadedConfig, { __mixin__: { a: 2 } })
-                        );
+                        expect(name).toBe('change');
+                        expect(conf).toEqual(_.merge({}, expectedLoadedConfig, { __mixin__: { a: 2 } }));
                         loader.unWatch();
                         res();
                     }));
@@ -151,8 +144,8 @@ describe('FileLoader', () => {
 
     describe('#unWatch', () => {
         it('should allow un watching a file for changes', () => {
-            const loader = new FileLoader({ file: path.resolve(__dirname, '../configs/configs1/config1.json') });
-            assert.deepStrictEqual(loader.loadSync(), helper.conf1);
+            const loader = new FileLoader({ file: path.resolve(__dirname, '../__fixtures__/configs/configs1/config1.json') });
+            expect(loader.loadSync()).toEqual(helper.conf1);
             let called = 0;
             loader.watch().on('change', () => {
                 loader.unWatch();
@@ -161,9 +154,9 @@ describe('FileLoader', () => {
             return helper.setTimeoutPromise(10)
                 .then(() => helper.updateConfig('conf1', { a: 2 }))
                 .then(() => helper.setTimeoutPromise(100))
-                .then(() => assert.strictEqual(called, 1))
+                .then(() => expect(called).toBe(1))
                 .then(() => helper.updateConfig('conf1', { a: 3 }))
-                .then(() => assert.strictEqual(called, 1));
+                .then(() => expect(called).toBe(1));
         });
     });
 });

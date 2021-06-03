@@ -159,12 +159,14 @@ const developmentMixin = {
     },
 };
 
+const CONFIGS_DIR = path.resolve(__dirname, 'configs');
+
 const configs = {
-    envConf: { config: envConf, file: path.resolve(__dirname, 'configs/config-env/config.json') },
-    envVarConf: { config: envVarConf, file: path.resolve(__dirname, 'configs/config-env-var/config.json') },
-    sharedEnvConf: { config: sharedEnvConf, file: path.resolve(__dirname, 'configs/config-shared-env/config.json') },
-    conf1: { config: conf1, file: path.resolve(__dirname, 'configs/configs1/config1.json') },
-    conf2: { config: conf2, file: path.resolve(__dirname, 'configs/configs2/config2.json') },
+    envConf: { config: envConf, file: path.resolve(CONFIGS_DIR, 'config-env/config.json') },
+    envVarConf: { config: envVarConf, file: path.resolve(CONFIGS_DIR, 'config-env-var/config.json') },
+    sharedEnvConf: { config: sharedEnvConf, file: path.resolve(CONFIGS_DIR, 'config-shared-env/config.json') },
+    conf1: { config: conf1, file: path.resolve(CONFIGS_DIR, 'configs1/config1.json') },
+    conf2: { config: conf2, file: path.resolve(CONFIGS_DIR, 'configs2/config2.json') },
 };
 
 const configsWithMixins = {
