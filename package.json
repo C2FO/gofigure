@@ -3,9 +3,8 @@
   "description": "Configuration library for node",
   "version": "1.0.0",
   "scripts": {
-    "mocha": "nyc mocha test/ --recursive",
-    "test": "npm run eslint && npm run mocha",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "jest": "jest --runInBand",
+    "test": "npm run eslint && npm run jest",
     "eslint": "eslint lib/. test/.",
     "eslint-fix": "eslint lib/. test/. --fix"
   },
@@ -24,16 +23,19 @@
     "url": "git@github.com:C2FO/gofigure.git"
   },
   "dependencies": {
-    "glob": "^7.1.4",
-    "lodash": "^4.17.11"
+    "glob": "^7.1.7",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "coveralls": "^3.0.3",
-    "eslint": "4.19.1",
-    "eslint-config-airbnb-base": "13.0.0",
-    "eslint-plugin-import": "2.13.0",
-    "mocha": "^5.2.0",
-    "nyc": "^14.1.1"
+    "eslint": "7.27.0",
+    "eslint-config-airbnb-base": "14.2.1",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-prettier": "3.4.0",
+    "eslint-plugin-import": "2.23.4",
+    "eslint-plugin-jest": "24.3.6",
+    "jest": "27.0.3",
+    "prettier": "2.3.0"
   },
   "author": "Doug Martin (doug.martin@c2fo.com)",
   "main": "index.js",
@@ -41,7 +43,7 @@
     "lib": "lib"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">= 12.0.0"
   },
   "contributors": [
     {
