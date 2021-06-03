@@ -1,10 +1,8 @@
 /* eslint-disable no-template-curly-in-string */
 
-
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-
 
 const conf1 = {
     a: 1,
@@ -160,7 +158,6 @@ const developmentMixin = {
         envType: 'development-mixin',
     },
 };
-
 
 const configs = {
     envConf: { config: envConf, file: path.resolve(__dirname, 'configs/config-env/config.json') },

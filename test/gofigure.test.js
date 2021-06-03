@@ -1,5 +1,3 @@
-
-
 process.env.NODE_ENV = '';
 
 const assert = require('assert');
@@ -7,12 +5,11 @@ const path = require('path');
 const _ = require('lodash');
 
 const helper = require('./helper');
-const goFigure = require('../index.js');
+const goFigure = require('../lib');
 
 const {
     conf1, conf2, envConf, sharedEnvConf,
 } = helper;
-
 
 describe('gofigure', () => {
     beforeEach(() => helper.createConfigs());
@@ -28,18 +25,18 @@ describe('gofigure', () => {
             const config1 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs1') ] });
             const config2 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs2') ] });
             return config1.load()
-                .then(config => assert.deepStrictEqual(config, conf1))
+                .then((config) => assert.deepStrictEqual(config, conf1))
                 .then(() => config2.load())
-                .then(config => assert.deepStrictEqual(config, conf2));
+                .then((config) => assert.deepStrictEqual(config, conf2));
         });
 
         it('load configuration from files', () => {
             const config1 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs1/config1.json') ] });
             const config2 = goFigure({ locations: [ path.resolve(__dirname, 'configs/configs2/config2.json') ] });
             return config1.load()
-                .then(config => assert.deepStrictEqual(config, conf1))
+                .then((config) => assert.deepStrictEqual(config, conf1))
                 .then(() => config2.load())
-                .then(config => assert.deepStrictEqual(config, conf2));
+                .then((config) => assert.deepStrictEqual(config, conf2));
         });
 
         describe('with an env', () => {
@@ -48,11 +45,11 @@ describe('gofigure', () => {
                 const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
                 const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-env') ] });
                 return configDev.load()
-                    .then(config => assert.deepStrictEqual(config, envConf.development))
+                    .then((config) => assert.deepStrictEqual(config, envConf.development))
                     .then(() => configProd.load())
-                    .then(config => assert.deepStrictEqual(config, envConf.production))
+                    .then((config) => assert.deepStrictEqual(config, envConf.production))
                     .then(() => configTest.load())
-                    .then(config => assert.deepStrictEqual(config, envConf.test));
+                    .then((config) => assert.deepStrictEqual(config, envConf.test));
             });
 
             it('from files', () => {
@@ -60,11 +57,11 @@ describe('gofigure', () => {
                 const configProd = goFigure({ environment: 'production', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
                 const configTest = goFigure({ environment: 'test', locations: [ path.resolve(__dirname, 'configs/config-env/config.json') ] });
                 return configDev.load()
-                    .then(config => assert.deepStrictEqual(config, envConf.development))
+                    .then((config) => assert.deepStrictEqual(config, envConf.development))
                     .then(() => configProd.load())
-                    .then(config => assert.deepStrictEqual(config, envConf.production))
+                    .then((config) => assert.deepStrictEqual(config, envConf.production))
                     .then(() => configTest.load())
-                    .then(config => assert.deepStrictEqual(config, envConf.test));
+                    .then((config) => assert.deepStrictEqual(config, envConf.test));
             });
         });
 
@@ -91,13 +88,13 @@ describe('gofigure', () => {
                     helper.configMixinProductionTwo['production-two'],
                     helper.productionMixin.mixin);
                 return configDevOne.load()
-                    .then(config => assert.deepStrictEqual(config, devOne))
+                    .then((config) => assert.deepStrictEqual(config, devOne))
                     .then(() => configDevTwo.load())
-                    .then(config => assert.deepStrictEqual(config, devTwo))
+                    .then((config) => assert.deepStrictEqual(config, devTwo))
                     .then(() => configProdOne.load())
-                    .then(config => assert.deepStrictEqual(config, prodOne))
+                    .then((config) => assert.deepStrictEqual(config, prodOne))
                     .then(() => configProdTwo.load())
-                    .then(config => assert.deepStrictEqual(config, prodTwo));
+                    .then((config) => assert.deepStrictEqual(config, prodTwo));
             });
 
             it('from files', () => {
@@ -118,13 +115,13 @@ describe('gofigure', () => {
                     helper.configMixinProductionTwo['production-two'],
                     helper.productionMixin.mixin);
                 return configDevOne.load()
-                    .then(config => assert.deepStrictEqual(config, devOne))
+                    .then((config) => assert.deepStrictEqual(config, devOne))
                     .then(() => configDevTwo.load())
-                    .then(config => assert.deepStrictEqual(config, devTwo))
+                    .then((config) => assert.deepStrictEqual(config, devTwo))
                     .then(() => configProdOne.load())
-                    .then(config => assert.deepStrictEqual(config, prodOne))
+                    .then((config) => assert.deepStrictEqual(config, prodOne))
                     .then(() => configProdTwo.load())
-                    .then(config => assert.deepStrictEqual(config, prodTwo));
+                    .then((config) => assert.deepStrictEqual(config, prodTwo));
             });
         });
     });
@@ -392,7 +389,7 @@ describe('gofigure', () => {
 
                 ];
                 return createUpdatesPromise('envConf', changes).then(() => {
-                    configs.forEach(c => c.stop());
+                    configs.forEach((c) => c.stop());
                     assert.deepStrictEqual(events, {
                         development: [
                             { key: 'a', val: 6 },
@@ -568,7 +565,7 @@ describe('gofigure', () => {
 
                 ];
                 return createUpdatesPromise('envConf', changes).then(() => {
-                    configs.forEach(c => c.stop());
+                    configs.forEach((c) => c.stop());
                     assert.deepStrictEqual(events, {
                         development: [
                             { key: 'a', val: 6 },

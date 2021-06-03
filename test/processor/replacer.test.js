@@ -1,6 +1,5 @@
 /* eslint-disable no-template-curly-in-string */
 
-
 const assert = require('assert');
 const replacer = require('../../lib/processor/replacer');
 
@@ -209,7 +208,7 @@ describe('processor replacer', () => {
                 // simple
                 assert.throws(() => {
                     replacer.doReplaceOnString('${ENV_A:?Missing ENV_A variable}', envVariables);
-                }, e => e.message === 'Missing ENV_A variable');
+                }, (e) => e.message === 'Missing ENV_A variable');
             });
 
             it('should throw an default error if the throw if unset is true and the ENV variable is not present', () => {
@@ -217,7 +216,7 @@ describe('processor replacer', () => {
                 // simple
                 assert.throws(() => {
                     replacer.doReplaceOnString('${ENV_A:?}', envVariables);
-                }, e => e.message === "'ENV_A' is either empty or unset in ENV variables");
+                }, (e) => e.message === "'ENV_A' is either empty or unset in ENV variables");
             });
 
             it('should throw an error if the value is empty', () => {
@@ -226,7 +225,7 @@ describe('processor replacer', () => {
                 };
                 assert.throws(() => {
                     replacer.doReplaceOnString('${ENV_A:?Missing ENV_A variable}', envVariables);
-                }, e => e.message === 'Missing ENV_A variable');
+                }, (e) => e.message === 'Missing ENV_A variable');
             });
         });
 
@@ -244,7 +243,7 @@ describe('processor replacer', () => {
                 // simple
                 assert.throws(() => {
                     replacer.doReplaceOnString('${ENV_A?Missing ENV_A variable}', envVariables);
-                }, e => e.message === 'Missing ENV_A variable');
+                }, (e) => e.message === 'Missing ENV_A variable');
             });
 
             it('should throw a default error if the throw if unset is true and the ENV variable is not present', () => {
@@ -252,7 +251,7 @@ describe('processor replacer', () => {
                 // simple
                 assert.throws(() => {
                     replacer.doReplaceOnString('${ENV_A?}', envVariables);
-                }, e => e.message === "'ENV_A' is either empty or unset in ENV variables");
+                }, (e) => e.message === "'ENV_A' is either empty or unset in ENV variables");
             });
 
             it('should NOT throw an error if the value is empty', () => {

@@ -1,5 +1,3 @@
-
-
 process.env.NODE_ENV = '';
 const assert = require('assert');
 const _ = require('lodash');
