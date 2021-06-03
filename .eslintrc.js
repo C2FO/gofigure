@@ -1,42 +1,24 @@
 module.exports = {
-    env: {
-        commonjs: true,
-        es6: true,
-        jest: true,
-    },
-    extends: 'airbnb-base',
-    globals: {
-        Atomics: 'readonly',
-        SharedArrayBuffer: 'readonly',
-    },
-    parserOptions: {
-        ecmaVersion: 2018,
-    },
-    plugins: [
-        'jest',
-    ],
-    rules: {
-        indent: [
-            'error',
-            4,
-        ],
-        'comma-dangle': [ 'error', {
-            arrays: 'always-multiline',
-            objects: 'always-multiline',
-            imports: 'always-multiline',
-            exports: 'always-multiline',
-            functions: 'never',
-        } ],
-        'no-restricted-syntax': [ 'error', 'ForInStatement', 'LabeledStatement', 'WithStatement' ],
-        'object-curly-spacing': [ 'error', 'always' ],
-        'array-bracket-spacing': [ 'error', 'always' ],
-        'no-underscore-dangle': 0,
-        'max-len': [ 'error', 120, 2, {
-            ignoreComments: false,
-            ignoreUrls: true,
-            ignoreRegExpLiterals: true,
-            ignoreStrings: true,
-            ignoreTemplateLiterals: true,
-        } ],
-    },
+  env: {
+    commonjs: true,
+    es6: true,
+    jest: true,
+  },
+  extends: [
+    'airbnb-base',
+    'plugin:jest/recommended',
+    'eslint:recommended',
+    'plugin:jest/style',
+    'plugin:prettier/recommended',
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
+  },
+  parserOptions: {
+    ecmaVersion: 2018,
+  },
+  rules: {
+    'no-underscore-dangle': 0,
+  },
 };
