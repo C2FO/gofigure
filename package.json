@@ -1,7 +1,7 @@
 {
   "name": "gofigure",
   "description": "Configuration library for node",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "scripts": {
     "jest": "jest --runInBand",
     "test": "npm run eslint && npm run jest",
