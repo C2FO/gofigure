@@ -1,5 +1,8 @@
 node_modules
 docs
 test
+coverage
 *.iml
 .idea
+.github
+.run
