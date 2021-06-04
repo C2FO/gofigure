@@ -1,5 +1,4 @@
-[![Test](https://github.com/C2FO/gofigure/workflows/Test/badge.svg?branch=master)](https://github.com/C2FO/gofigure/actions?query=workflow%3ATest+and+branch%3Amaster+)
-[![Coverage Status](https://coveralls.io/repos/github/C2FO/gofigure/badge.svg?branch=master)](https://coveralls.io/github/C2FO/gofigure?branch=master)
+[![Test](https://github.com/C2FO/gofigure/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/C2FO/gofigure/actions/workflows/test.yml)[![Coverage Status](https://coveralls.io/repos/github/C2FO/gofigure/badge.svg?branch=master)](https://coveralls.io/github/C2FO/gofigure?branch=master)
 
 # gofigure
 
