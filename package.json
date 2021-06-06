@@ -34,7 +34,7 @@
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-import": "2.23.4",
     "eslint-plugin-jest": "24.3.6",
-    "jest": "27.0.3",
+    "jest": "27.0.4",
     "prettier": "2.3.0"
   },
   "author": "Doug Martin (doug.martin@c2fo.com)",
