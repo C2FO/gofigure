@@ -32,7 +32,7 @@ Gofigure currently handles the loading of JSON files for configurations.
 
 To Get an instance of a configuration object use the `gofigure` method. The `gofigure` method takes an object that accepts the following options
 
-  * [locations](#loadDir)  : an array of directories or [an Etcd server definition](#loadEtcd) that contain your configurations.
+  * [locations](#loadDir)  : an array of directories that contain your configurations.
   * [files](#loadFiles)  : an array of files that contain your configurations.
   * [monitor](#monitoring) : set to true to monitor changes to configuration files.
   * `ignoreMissing` : By default `gofigure` will ignore missing directories. Set this to false to precent the ignoring of missing configuration directories.
@@ -135,7 +135,7 @@ Again order matters `/prod/configs/config1.json` will override `path.resolve(__d
 Gofigure supports the monitoring of changes to configuration files.
 
 <a name="monitoringAll"></a>
-### All files or Etcd server
+### All files
 
 To enable monitoring you can specify monitor to true in the options.
 
