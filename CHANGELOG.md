@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [2.0.1](https://github.com/C2FO/gofigure/compare/v2.0.0...v2.0.1) (2021-06-06)
 
-## [2.0.1](https://github.com/C2FO/gofigure/compare/v1.0.0...v2.0.0) (2021-06-04)
+## [2.0.0](https://github.com/C2FO/gofigure/compare/v1.0.0...v2.0.0) (2021-06-04)
 
 ### Bug Fixes
 * [FIX] Incorrect type in jsdoc comment - [#25](https://github.com/C2FO/gofigure/pull/25) - [@NLincoln](https://github.com/NLincoln)

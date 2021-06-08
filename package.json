@@ -7,7 +7,7 @@
     "test": "npm run eslint && npm run jest",
     "eslint": "eslint lib/. test/.",
     "eslint-fix": "eslint lib/. test/. --fix",
-    "release": "standard-version"
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "Config",
@@ -21,7 +21,7 @@
   "homepage": "http://c2fo.github.com/gofigure",
   "repository": {
     "type": "git",
-    "url": "git@github.com:C2FO/gofigure.git"
+    "url": "https://github.com/C2FO/gofigure.git"
   },
   "dependencies": {
     "glob": "^7.1.7",
@@ -41,7 +41,7 @@
     "husky": "^6.0.0",
     "jest": "27.0.4",
     "prettier": "2.3.1",
-    "standard-version": "^9.3.0"
+    "semantic-release": "^17.4.3"
   },
   "author": "Doug Martin (doug.martin@c2fo.com)",
   "main": "index.js",
