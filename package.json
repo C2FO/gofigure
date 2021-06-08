@@ -28,20 +28,20 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.1.4",
-    "@commitlint/config-angular": "^12.1.4",
-    "@commitlint/config-conventional": "^12.1.4",
-    "coveralls": "^3.0.3",
+    "@commitlint/cli": "12.1.4",
+    "@commitlint/config-angular": "12.1.4",
+    "@commitlint/config-conventional": "12.1.4",
+    "coveralls": "3.1.0",
     "eslint": "7.28.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.23.4",
     "eslint-plugin-jest": "24.3.6",
     "eslint-plugin-prettier": "3.4.0",
-    "husky": "^6.0.0",
+    "husky": "6.0.0",
     "jest": "27.0.4",
     "prettier": "2.3.1",
-    "semantic-release": "^17.4.3"
+    "semantic-release": "17.4.3"
   },
   "author": "Doug Martin (doug.martin@c2fo.com)",
   "main": "index.js",
