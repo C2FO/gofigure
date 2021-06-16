@@ -1,8 +1,0 @@
-{
-    "mixins": [
-        "./development.mixin.json"
-    ],
-    "development-two": {
-        "development-env-name": "development-two"
-    }
-}

@@ -2,3 +2,4 @@ node_modules
 *.iml
 .idea
 coverage
+test/__fixtures__/generated
