@@ -64,37 +64,28 @@ describe('gofigure', () => {
       describe('from multiple directories', () => {
         it('should merged configs with the specified priority', async () => {
           const locations = [envConf.dir, sharedEnvConf.dir];
+          const sharedDevEnv = _.merge({}, sharedEnvConf.config['*'], sharedEnvConf.config.development);
+          const sharedProdEnv = _.merge({}, sharedEnvConf.config['*'], sharedEnvConf.config.production);
+          const sharedTestEnv = _.merge({}, sharedEnvConf.config['*'], sharedEnvConf.config.test);
 
           const configDev = await goFigure({ environment: 'development', locations }).load();
-          expect(configDev).toEqual(
-            _.merge({}, sharedEnvConf.config['*'], sharedEnvConf.config.development, envConf.config.development),
-          );
+          expect(configDev).toEqual(_.merge({}, sharedDevEnv, envConf.config.development));
 
           const configProd = await goFigure({ environment: 'production', locations }).load();
-          expect(configProd).toEqual(
-            _.merge({}, sharedEnvConf.config['*'], sharedEnvConf.config.production, envConf.config.production),
-          );
+          expect(configProd).toEqual(_.merge({}, sharedProdEnv, envConf.config.production));
 
           const configTest = await goFigure({ environment: 'test', locations }).load();
-          expect(configTest).toEqual(
-            _.merge({}, sharedEnvConf.config['*'], sharedEnvConf.config.test, envConf.config.test),
-          );
+          expect(configTest).toEqual(_.merge({}, sharedTestEnv, envConf.config.test));
 
           const locations2 = [...locations].reverse();
           const configDev2 = await goFigure({ environment: 'development', locations: locations2 }).load();
-          expect(configDev2).toEqual(
-            _.merge({}, sharedEnvConf.config['*'], envConf.config.development, sharedEnvConf.config.development),
-          );
+          expect(configDev2).toEqual(_.merge({}, envConf.config.development, sharedDevEnv));
 
           const configProd2 = await goFigure({ environment: 'production', locations: locations2 }).load();
-          expect(configProd2).toEqual(
-            _.merge({}, sharedEnvConf.config['*'], envConf.config.production, sharedEnvConf.config.production),
-          );
+          expect(configProd2).toEqual(_.merge({}, envConf.config.production, sharedProdEnv));
 
           const configTest2 = await goFigure({ environment: 'test', locations: locations2 }).load();
-          expect(configTest2).toEqual(
-            _.merge({}, sharedEnvConf.config['*'], envConf.config.test, sharedEnvConf.config.test),
-          );
+          expect(configTest2).toEqual(_.merge({}, envConf.config.test, sharedTestEnv));
         });
       });
 
