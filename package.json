@@ -41,7 +41,7 @@
     "husky": "6.0.0",
     "jest": "27.5.1",
     "prettier": "2.3.2",
-    "semantic-release": "17.4.4"
+    "semantic-release": "19.0.5"
   },
   "author": "Doug Martin (doug.martin@c2fo.com)",
   "main": "index.js",
