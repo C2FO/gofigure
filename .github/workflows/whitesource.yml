@@ -21,7 +21,7 @@ jobs:
           persist-credentials: false
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_C2FO_GITHUB_ACTIONS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_C2FO_GITHUB_ACTIONS_SECRET }}
